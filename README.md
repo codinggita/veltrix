@@ -212,10 +212,11 @@ npm run dev
 
 ---
 
-## 📖 Documentation
+## 📖 Documentation & Design
 
 For the complete product specification, see:
 
+- [Figma Design](https://www.figma.com/design/cdVVUVDGkP5GooQPCZDcXV/Untitled?node-id=0-1&t=Jvs9vqxuuyQHoMBv-1) — UI mocks and components
 - [Product Requirements Document](docs/veltrix-prd.md) — Full PRD with all specs
 - [Frontend Specification](docs/frontend.md) — Component and page details
 - [Backend Specification](docs/backend.md) — API and database schemas
