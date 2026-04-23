@@ -141,27 +141,54 @@ export const VisualAnalytics = () => (
   </div>
 );
 
-export const VisualClient = () => (
+export const VisualClient = ({ isHovered }) => (
   <div className="h-40 rounded-xl bg-black mb-10 relative overflow-hidden flex items-center justify-center border border-white/[0.05]">
-    <div className="flex -space-x-4 group-hover:-space-x-2 transition-all duration-500">
-      <div className="w-14 h-14 rounded-full bg-[#1A1A1A] border-4 border-[#111111] flex items-center justify-center z-30 shadow-lg">
+    <div className="flex relative items-center justify-center w-full">
+      <motion.div 
+        animate={{ x: isHovered ? -45 : -25 }}
+        transition={{ type: "spring", stiffness: 100, damping: 15 }}
+        className="w-14 h-14 rounded-full bg-[#1A1A1A] border-4 border-[#111111] flex items-center justify-center z-30 shadow-2xl relative"
+      >
         <span className="material-symbols-outlined text-gray-500">person</span>
-      </div>
-      <div className="w-14 h-14 rounded-full bg-[#202020] border-4 border-[#111111] flex items-center justify-center z-20 shadow-lg">
+        <div className="absolute top-0 right-0 w-3 h-3 bg-emerald-500 rounded-full border-2 border-[#111111] animate-pulse"></div>
+      </motion.div>
+      
+      <motion.div 
+        animate={{ x: isHovered ? 0 : 0 }}
+        transition={{ type: "spring", stiffness: 100, damping: 15 }}
+        className="w-14 h-14 rounded-full bg-[#202020] border-4 border-[#111111] flex items-center justify-center z-20 shadow-xl relative"
+      >
         <span className="material-symbols-outlined text-primary/50">corporate_fare</span>
-      </div>
-      <div className="w-14 h-14 rounded-full bg-primary/20 border-4 border-[#111111] flex items-center justify-center z-10 backdrop-blur-sm shadow-[0_0_20px_rgba(79,70,229,0.2)]">
+      </motion.div>
+      
+      <motion.div 
+        animate={{ x: isHovered ? 45 : 25 }}
+        transition={{ type: "spring", stiffness: 100, damping: 15 }}
+        className="w-14 h-14 rounded-full bg-primary/20 border-4 border-[#111111] flex items-center justify-center z-10 backdrop-blur-sm shadow-[0_0_20px_rgba(79,70,229,0.2)] relative"
+      >
         <span className="text-xs text-primary font-bold">+12</span>
-      </div>
+      </motion.div>
     </div>
+    
+    {/* Background pulsing circle on hover */}
+    <div className={`absolute inset-0 bg-primary/5 transition-opacity duration-1000 ${isHovered ? 'opacity-100' : 'opacity-0'}`}></div>
+    <div className={`absolute w-60 h-60 bg-primary/10 rounded-full blur-[60px] transition-opacity duration-1000 ${isHovered ? 'opacity-100' : 'opacity-0'}`}></div>
   </div>
 );
 
-export const FeatureCard = ({ title, desc, VisualComponent, gradientDirection }) => (
-  <div className="bg-[#111111] rounded-[24px] p-10 border border-white/[0.05] hover:border-primary/30 transition-colors duration-500 flex flex-col h-full group relative overflow-hidden">
-    <div className={`absolute inset-0 bg-gradient-to-${gradientDirection} from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
-    <VisualComponent />
-    <h3 className="font-headline font-bold text-2xl text-white mb-4 relative z-10">{title}</h3>
-    <p className="text-gray-400 text-sm leading-relaxed mt-auto relative z-10 text-justify">{desc}</p>
-  </div>
-);
+export const FeatureCard = ({ title, desc, VisualComponent, gradientDirection }) => {
+  const [isHovered, setIsHovered] = React.useState(false);
+  
+  return (
+    <div 
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="bg-[#111111] rounded-[24px] p-10 border border-white/[0.05] hover:border-primary/30 transition-colors duration-500 flex flex-col h-full group relative overflow-hidden"
+    >
+      <div className={`absolute inset-0 bg-gradient-to-${gradientDirection} from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
+      <VisualComponent isHovered={isHovered} />
+      <h3 className="font-headline font-bold text-2xl text-white mb-4 relative z-10">{title}</h3>
+      <p className="text-gray-400 text-sm leading-relaxed mt-auto relative z-10 text-left">{desc}</p>
+    </div>
+  );
+};
