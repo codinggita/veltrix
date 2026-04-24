@@ -119,7 +119,7 @@ const LandingPage = () => {
                     <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent pointer-events-none"></div>
                     <div className="text-xs font-bold tracking-widest uppercase text-gray-500 mb-8 relative z-10">Capital Velocity Target</div>
                     
-                    <div className="flex-1 flex items-end gap-4 relative z-10">
+                    <div className="h-[200px] flex items-end gap-4 relative z-10 mt-auto">
                       {CHART_BARS.map((bar, i) => (
                         <motion.div 
                           key={i}
