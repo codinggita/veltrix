@@ -7,7 +7,7 @@ const {
   updateClient,
   deleteClient
 } = require('../controllers/clientController');
-const { protect } = require('../middleware/authMiddleware');
+const protect = require('../middleware/authMiddleware');
 
 router.use(protect);
 
