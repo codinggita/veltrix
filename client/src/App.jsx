@@ -4,6 +4,7 @@ import LoginPage from './pages/public/LoginPage';
 import SignupPage from './pages/public/SignupPage';
 import DashboardPage from './pages/dashboard/DashboardPage';
 import InvoicesPage from './pages/dashboard/InvoicesPage';
+import PaymentsPage from './pages/dashboard/PaymentsPage';
 import ClientsPage from './pages/dashboard/ClientsPage';
 import SettingsPage from './pages/dashboard/SettingsPage';
 import AnalyticsPage from './pages/dashboard/AnalyticsPage';
@@ -28,6 +29,7 @@ function App() {
                 <Route path="dashboard" element={<DashboardPage />} />
                 <Route path="invoices" element={<InvoicesPage />} />
                 <Route path="invoices/create" element={<CreateInvoicePage />} />
+                <Route path="payments" element={<PaymentsPage />} />
                 <Route path="clients" element={<ClientsPage />} />
                 <Route path="analytics" element={<AnalyticsPage />} />
                 <Route path="settings" element={<SettingsPage />} />
