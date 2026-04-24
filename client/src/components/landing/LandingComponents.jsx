@@ -37,30 +37,36 @@ export const FadeInWhenVisible = ({ children, delay = 0, y = 30 }) => (
   </motion.div>
 );
 
-export const TopNav = () => (
-  <motion.nav 
-    initial={{ y: -20, opacity: 0 }}
-    animate={{ y: 0, opacity: 1 }}
-    transition={{ duration: 0.8, ease: "easeOut" }}
-    className="fixed top-0 w-full z-50 bg-[#0A0A0A]/70 backdrop-blur-3xl shadow-none no-border border-b border-white/[0.02]"
-  >
-    <div className="flex justify-between items-center w-full px-8 py-5 mx-auto max-w-7xl">
-      <div className="text-2xl font-black text-white tracking-tighter font-headline flex items-center gap-2 group cursor-pointer">
-        <span className="material-symbols-outlined text-primary text-3xl transition-transform group-hover:rotate-12">currency_exchange</span>
-        Veltrix
+import { useSelector } from 'react-redux';
+
+export const TopNav = () => {
+  const { isAuthenticated } = useSelector((state) => state.auth);
+  
+  return (
+    <motion.nav 
+      initial={{ y: -20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+      className="fixed top-0 w-full z-50 bg-[#0A0A0A]/70 backdrop-blur-3xl shadow-none no-border border-b border-white/[0.02]"
+    >
+      <div className="flex justify-between items-center w-full px-8 py-5 mx-auto max-w-7xl">
+        <div className="text-2xl font-black text-white tracking-tighter font-headline flex items-center gap-2 group cursor-pointer">
+          <span className="material-symbols-outlined text-primary text-3xl transition-transform group-hover:rotate-12">currency_exchange</span>
+          Veltrix
+        </div>
+        
+        <div className="flex items-center gap-6">
+          <button className="text-gray-400 hover:text-white transition-colors hover:bg-white/10 p-2 rounded-full scale-95 active:scale-90">
+            <span className="material-symbols-outlined">account_balance_wallet</span>
+          </button>
+          <Link to={isAuthenticated ? "/app/dashboard" : "/login"} className="bg-white text-black px-6 py-2.5 rounded-full font-bold text-sm shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] transition-all duration-300 hover:scale-105 active:scale-95">
+            {isAuthenticated ? "Go to Dashboard" : "Access Terminal"}
+          </Link>
+        </div>
       </div>
-      
-      <div className="flex items-center gap-6">
-        <button className="text-gray-400 hover:text-white transition-colors hover:bg-white/10 p-2 rounded-full scale-95 active:scale-90">
-          <span className="material-symbols-outlined">account_balance_wallet</span>
-        </button>
-        <Link to="/login" className="bg-white text-black px-6 py-2.5 rounded-full font-bold text-sm shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] transition-all duration-300 hover:scale-105 active:scale-95">
-          Access Terminal
-        </Link>
-      </div>
-    </div>
-  </motion.nav>
-);
+    </motion.nav>
+  );
+};
 
 export const Footer = () => (
   <footer className="bg-[#0A0A0A] w-full py-16 px-8 border-t border-white/5 relative z-10 mt-10">

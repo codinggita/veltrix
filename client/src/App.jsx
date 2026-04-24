@@ -8,6 +8,7 @@ import ClientsPage from './pages/dashboard/ClientsPage';
 import SettingsPage from './pages/dashboard/SettingsPage';
 import CreateInvoicePage from './pages/dashboard/CreateInvoicePage';
 import ProtectedRoute from './components/ProtectedRoute';
+import PublicRoute from './components/PublicRoute';
 import DashboardLayout from './components/layout/DashboardLayout';
 
 function App() {
@@ -15,8 +16,8 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+        <Route path="/signup" element={<PublicRoute><SignupPage /></PublicRoute>} />
         
         {/* Dashboard Routes with Layout */}
         <Route path="/app/*" element={

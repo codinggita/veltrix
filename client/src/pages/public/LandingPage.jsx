@@ -1,5 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { 
   STATS_DATA, 
@@ -18,6 +19,7 @@ import {
 // MAIN PAGE
 // ==========================================
 const LandingPage = () => {
+  const { isAuthenticated } = useSelector((state) => state.auth);
   const { scrollY } = useScroll();
   const heroY = useTransform(scrollY, [0, 500], [0, 150]);
   const heroOpacity = useTransform(scrollY, [0, 300], [1, 0]);
@@ -203,8 +205,8 @@ const LandingPage = () => {
               <p className="text-gray-400 text-lg mb-12 max-w-lg mx-auto font-light">
                 Step into absolute clarity. Claim your sovereignty over chaotic financial data in seconds.
               </p>
-              <Link to="/signup" className="group relative bg-white text-black px-12 py-5 rounded-full font-bold text-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] inline-flex items-center gap-3">
-                Start Free Trial
+              <Link to={isAuthenticated ? "/app/dashboard" : "/signup"} className="group relative bg-white text-black px-12 py-5 rounded-full font-bold text-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] inline-flex items-center gap-3">
+                {isAuthenticated ? "Go to Dashboard" : "Start Free Trial"}
                 <span className="material-symbols-outlined text-[20px] transition-transform group-hover:translate-x-1">arrow_forward</span>
               </Link>
             </div>
