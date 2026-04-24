@@ -28,10 +28,10 @@ const Sidebar = () => {
     <div className="w-[280px] h-screen bg-[#0F0F0F] border-r border-[#1E1E1E] flex flex-col sticky top-0">
       {/* Logo */}
       <div className="p-8 mb-4">
-        <div className="flex items-center gap-2 group cursor-pointer">
+        <Link to="/" className="flex items-center gap-2 group cursor-pointer">
           <span className="material-symbols-outlined text-primary text-3xl transition-transform group-hover:rotate-12">currency_exchange</span>
           <h1 className="text-2xl font-black text-white tracking-tighter font-headline">Veltrix</h1>
-        </div>
+        </Link>
       </div>
 
       {/* Navigation */}
