@@ -19,18 +19,6 @@ const Navbar = () => {
           <span className="material-symbols-outlined text-[24px]">notifications</span>
           <span className="absolute top-0 right-0 w-2 h-2 bg-primary rounded-full border-2 border-[#0F0F0F]" />
         </button>
-        
-        <div className="h-8 w-px bg-[#1E1E1E]" />
-
-        <div className="flex items-center gap-4 group cursor-pointer">
-          <div className="text-right">
-            <div className="text-xs font-black text-white group-hover:text-primary transition-colors">Alex Sterling</div>
-            <div className="text-[10px] text-text-muted font-bold tracking-tighter">System Administrator</div>
-          </div>
-          <div className="w-10 h-10 rounded-xl bg-[#1A1A1A] border border-[#2A2A2A] overflow-hidden">
-             <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Alex" alt="Avatar" />
-          </div>
-        </div>
       </div>
     </div>
   );

@@ -4,12 +4,14 @@ import PageWrapper from '../../components/layout/PageWrapper';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
 import axiosInstance from '../../services/axiosInstance';
-import { setUser } from '../../features/authSlice';
+import { logoutThunk, setUser } from '../../features/authSlice';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
 const SettingsPage = () => {
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('Business Info');
   const [isLoading, setIsLoading] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
@@ -68,6 +70,14 @@ const SettingsPage = () => {
       toast.error(error.response?.data?.message || 'Failed to update password');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    if (window.confirm('Are you sure you want to log out?')) {
+      await dispatch(logoutThunk());
+      toast.success('Logged out successfully');
+      navigate('/login');
     }
   };
 
@@ -138,6 +148,22 @@ const SettingsPage = () => {
                   </div>
                 </form>
               )}
+            </div>
+
+            <div className="pt-8 border-t border-white/5 space-y-4">
+              <div>
+                <h3 className="text-sm font-bold text-rose-500">Danger Zone</h3>
+                <p className="text-[10px] text-text-muted font-bold mt-1 uppercase tracking-widest leading-relaxed">
+                  Terminate your current session and exit the terminal.
+                </p>
+              </div>
+              <Button 
+                variant="secondary" 
+                onClick={handleLogout}
+                className="px-6 border-rose-500/20 bg-rose-500/5 text-rose-500 hover:bg-rose-500 hover:text-white transition-all border shadow-sm"
+              >
+                Sign Out from Veltrix
+              </Button>
             </div>
           </div>
         );

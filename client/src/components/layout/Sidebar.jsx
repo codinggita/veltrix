@@ -1,8 +1,19 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { logoutThunk } from '../../features/authSlice';
 
 const Sidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+
+  const handleLogout = () => {
+    if (window.confirm('Sign out of Veltrix terminal?')) {
+      dispatch(logoutThunk());
+      navigate('/login');
+    }
+  };
 
   const menuItems = [
     { name: 'Dashboard', icon: 'dashboard', path: '/app/dashboard' },
@@ -17,14 +28,9 @@ const Sidebar = () => {
     <div className="w-[280px] h-screen bg-[#0F0F0F] border-r border-[#1E1E1E] flex flex-col sticky top-0">
       {/* Logo */}
       <div className="p-8 mb-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(79,70,229,0.4)]">
-            <span className="material-symbols-outlined text-white text-[24px]">account_balance_wallet</span>
-          </div>
-          <div>
-            <h1 className="text-xl font-black text-white tracking-tighter leading-none">Veltrix</h1>
-            <p className="text-[10px] font-bold text-text-muted mt-1 uppercase tracking-[0.1em]">Micro-Business OS</p>
-          </div>
+        <div className="flex items-center gap-2 group cursor-pointer">
+          <span className="material-symbols-outlined text-primary text-3xl transition-transform group-hover:rotate-12">currency_exchange</span>
+          <h1 className="text-2xl font-black text-white tracking-tighter font-headline">Veltrix</h1>
         </div>
       </div>
 
@@ -62,16 +68,16 @@ const Sidebar = () => {
 
         <div className="flex items-center justify-between p-2">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-primary/40 border border-[#2A2A2A] overflow-hidden">
-               <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Alex" alt="Avatar" />
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-primary/40 border border-[#2A2A2A] overflow-hidden flex items-center justify-center">
+               <img src={`https://api.dicebear.com/7.x/identicon/svg?seed=${user?.name || 'Veltrix'}`} alt="Avatar" className="w-full h-full object-cover" />
             </div>
-            <div>
-              <div className="text-xs font-black text-white leading-tight">Alex Sterling</div>
-              <div className="text-[10px] text-text-muted font-bold mt-0.5">Founder</div>
+            <div className="max-w-[120px]">
+              <div className="text-xs font-black text-white leading-tight truncate">{user?.name || 'User'}</div>
+              <div className="text-[10px] text-text-muted font-bold mt-0.5 truncate uppercase tracking-widest">{user?.businessName || 'Sovereign Head'}</div>
             </div>
           </div>
-          <button className="text-text-muted hover:text-white transition-colors">
-            <span className="material-symbols-outlined text-[20px]">more_vert</span>
+          <button onClick={handleLogout} className="text-text-muted hover:text-rose-500 transition-colors" title="Logout">
+            <span className="material-symbols-outlined text-[20px]">logout</span>
           </button>
         </div>
       </div>
