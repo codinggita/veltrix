@@ -6,6 +6,7 @@ import DashboardPage from './pages/dashboard/DashboardPage';
 import InvoicesPage from './pages/dashboard/InvoicesPage';
 import ClientsPage from './pages/dashboard/ClientsPage';
 import SettingsPage from './pages/dashboard/SettingsPage';
+import AnalyticsPage from './pages/dashboard/AnalyticsPage';
 import CreateInvoicePage from './pages/dashboard/CreateInvoicePage';
 import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
@@ -28,6 +29,7 @@ function App() {
                 <Route path="invoices" element={<InvoicesPage />} />
                 <Route path="invoices/create" element={<CreateInvoicePage />} />
                 <Route path="clients" element={<ClientsPage />} />
+                <Route path="analytics" element={<AnalyticsPage />} />
                 <Route path="settings" element={<SettingsPage />} />
                 {/* Fallback for /app */}
                 <Route path="" element={<Navigate to="dashboard" replace />} />
