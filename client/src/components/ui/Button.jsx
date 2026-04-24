@@ -16,7 +16,8 @@ const Button = ({
     secondary: 'bg-[#1A1A1A] text-white border border-white/10 hover:bg-[#252525] hover:border-white/20 font-semibold',
     outline: 'bg-transparent border border-white/20 text-white hover:border-white/40 hover:bg-white/5 font-medium',
     ghost: 'bg-transparent text-gray-400 hover:text-white hover:bg-white/5 font-medium',
-    danger: 'bg-rose-500/10 text-rose-500 border border-rose-500/20 hover:bg-rose-500/20 font-bold'
+    danger: 'bg-rose-500/10 text-rose-500 border border-rose-500/20 hover:bg-rose-500/20 font-bold',
+    brand: 'bg-primary text-white hover:opacity-90 shadow-[0_0_20px_rgba(79,70,229,0.3)] font-bold uppercase tracking-widest'
   };
 
   const sizes = {
