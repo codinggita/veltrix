@@ -6,6 +6,7 @@ import DashboardPage from './pages/dashboard/DashboardPage';
 import InvoicesPage from './pages/dashboard/InvoicesPage';
 import ClientsPage from './pages/dashboard/ClientsPage';
 import SettingsPage from './pages/dashboard/SettingsPage';
+import CreateInvoicePage from './pages/dashboard/CreateInvoicePage';
 import ProtectedRoute from './components/ProtectedRoute';
 import DashboardLayout from './components/layout/DashboardLayout';
 
@@ -24,6 +25,7 @@ function App() {
               <Routes>
                 <Route path="dashboard" element={<DashboardPage />} />
                 <Route path="invoices" element={<InvoicesPage />} />
+                <Route path="invoices/create" element={<CreateInvoicePage />} />
                 <Route path="clients" element={<ClientsPage />} />
                 <Route path="settings" element={<SettingsPage />} />
                 {/* Fallback for /app */}
