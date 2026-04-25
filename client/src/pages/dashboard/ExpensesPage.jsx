@@ -13,7 +13,8 @@ import { formatCurrency, formatDate } from '../../utils/formatters';
 const ExpensesPage = () => {
   const dispatch = useDispatch();
   const { expenses, isLoading } = useSelector((state) => state.expenses);
-  const [activeCategory, setActiveFilter] = useState('All');
+  const [activeCategory, setActiveCategory] = useState('All');
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [expenseToEdit, setExpenseToEdit] = useState(null);
 
@@ -133,7 +134,7 @@ const ExpensesPage = () => {
               {['All', 'Marketing', 'Rent', 'Salaries', 'Software', 'Other'].map((cat) => (
                 <button
                   key={cat}
-                  onClick={() => setActiveFilter(cat)}
+                  onClick={() => setActiveCategory(cat)}
                   className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
                     activeCategory === cat ? 'bg-white text-black' : 'text-text-muted hover:text-white'
                   }`}
