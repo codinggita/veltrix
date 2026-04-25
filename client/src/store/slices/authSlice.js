@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import authService from '../services/authService';
+import authService from '../../services/authService';
 
 const token = localStorage.getItem('veltrix_token');
 
