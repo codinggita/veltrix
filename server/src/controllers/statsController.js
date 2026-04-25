@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Client = require('../models/Client');
 const Invoice = require('../models/Invoice');
+const Expense = require('../models/Expense');
 const asyncHandler = require('../utils/asyncHandler');
 const ApiResponse = require('../utils/apiResponse');
 
@@ -38,6 +39,48 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
   const totalRevenue = revenueStats[0]?.totalRevenue || 0;
   const pendingAmount = revenueStats[0]?.pendingAmount || 0;
 
+  // Trend Data for Cash Flow Analytics (Last 6 Months)
+  const sixMonthsAgo = new Date();
+  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6); // Go back 6 full months
+
+  const revenueTrend = await Invoice.aggregate([
+    { 
+      $match: { 
+        user: userObjectId,
+        createdAt: { $gte: sixMonthsAgo } 
+      } 
+    },
+    {
+      $group: {
+        _id: { 
+          month: { $month: '$createdAt' }, 
+          year: { $year: '$createdAt' } 
+        },
+        amount: { $sum: { $ifNull: ['$total', 0] } }
+      }
+    },
+    { $sort: { '_id.year': 1, '_id.month': 1 } }
+  ]);
+
+  const expenseTrend = await Expense.aggregate([
+    { 
+      $match: { 
+        user: userObjectId,
+        createdAt: { $gte: sixMonthsAgo } 
+      } 
+    },
+    {
+      $group: {
+        _id: { 
+          month: { $month: '$createdAt' }, 
+          year: { $year: '$createdAt' } 
+        },
+        amount: { $sum: { $ifNull: ['$amount', 0] } }
+      }
+    },
+    { $sort: { '_id.year': 1, '_id.month': 1 } }
+  ]);
+
   const recentClients = await Client.find(clientQuery)
     .sort('-createdAt')
     .limit(5)
@@ -58,6 +101,10 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
       recentClients,
       recentInvoices,
       recentActivity: recentInvoices,
+      cashFlowData: {
+        revenue: revenueTrend,
+        expenses: expenseTrend
+      }
     }, "Dashboard stats fetched successfully")
   );
 });

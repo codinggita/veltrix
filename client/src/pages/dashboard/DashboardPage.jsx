@@ -1,5 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { 
+  AreaChart, 
+  Area, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer,
+  Legend
+} from 'recharts';
 import PageWrapper from '../../components/layout/PageWrapper';
 import StatCard from '../../components/dashboard/StatCard';
 import axiosInstance from '../../services/axiosInstance';
@@ -15,6 +25,7 @@ const DashboardPage = () => {
     const fetchStats = async () => {
       try {
         const res = await axiosInstance.get('/stats/dashboard');
+        console.log('Dashboard Stats Response:', res.data.data);
         setStats(res.data.data);
       } catch (error) {
         console.error('Failed to load dashboard stats', error);
@@ -24,6 +35,43 @@ const DashboardPage = () => {
     };
     fetchStats();
   }, []);
+
+  const chartData = useMemo(() => {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const data = [];
+    
+    // Generate last 6 months
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date();
+      d.setMonth(d.getMonth() - i);
+      const m = d.getMonth() + 1;
+      const y = d.getFullYear();
+      
+      let rev = 0;
+      let exp = 0;
+
+      if (stats?.cashFlowData) {
+        const foundRev = stats.cashFlowData.revenue?.find(r => 
+          Number(r._id.month) === Number(m) && Number(r._id.year) === Number(y)
+        );
+        const foundExp = stats.cashFlowData.expenses?.find(e => 
+          Number(e._id.month) === Number(m) && Number(e._id.year) === Number(y)
+        );
+        
+        rev = foundRev?.amount || 0;
+        exp = foundExp?.amount || 0;
+      }
+      
+      data.push({
+        name: months[m - 1],
+        income: rev,
+        expenses: exp
+      });
+    }
+
+    console.log('Processed Chart Data:', data);
+    return data;
+  }, [stats]);
 
   if (isLoading) {
     return (
@@ -35,7 +83,6 @@ const DashboardPage = () => {
     );
   }
 
-  // Data mapping from API
   const metrics = [
     {
       title: "Total Revenue",
@@ -65,7 +112,6 @@ const DashboardPage = () => {
 
   return (
     <PageWrapper title="">
-      {/* Top Metrics Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {metrics.map((m, i) => (
           <StatCard 
@@ -80,33 +126,77 @@ const DashboardPage = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
-        {/* Cash Flow Analytics */}
         <div className="lg:col-span-2 bg-[#121212] border border-[#1E1E1E] rounded-2xl p-8">
-          <div className="flex justify-between items-start mb-10">
+          <div className="flex justify-between items-start mb-6">
             <div>
               <h2 className="text-lg font-bold text-white tracking-tight">Cash Flow Analytics</h2>
               <p className="text-xs text-text-muted font-medium mt-1">Overview of income vs operating expenses</p>
             </div>
-            <div className="flex gap-4">
-              <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-primary" />
-                <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Income</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-[#1E1E1E]" />
-                <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Expenses</span>
-              </div>
-            </div>
           </div>
           
-          <div className="h-64 flex items-end justify-between gap-4 px-2 text-center">
-            <div className="w-full h-full flex items-center justify-center text-text-muted text-xs italic border border-white/5 border-dashed rounded-xl">
-               Financial trend visualization coming in next update
-            </div>
+          <div className="h-72">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#4F46E5" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#4F46E5" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#1E1E1E" vertical={false} />
+                <XAxis 
+                  dataKey="name" 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fill: '#6B7280', fontSize: 10, fontWeight: 600 }}
+                  dy={10}
+                />
+                <YAxis 
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: '#6B7280', fontSize: 10 }}
+                />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: '#1A1A1A', 
+                    border: '1px solid #2A2A2A', 
+                    borderRadius: '12px',
+                    fontSize: '12px',
+                    color: '#E5E7EB'
+                  }}
+                  itemStyle={{ color: '#E5E7EB' }}
+                  cursor={{ stroke: '#4F46E5', strokeWidth: 1 }}
+                />
+                <Legend 
+                  verticalAlign="top" 
+                  align="right" 
+                  iconType="circle"
+                  wrapperStyle={{ paddingBottom: '20px', fontSize: '10px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em' }}
+                />
+                <Area 
+                  name="Income"
+                  type="monotone" 
+                  dataKey="income" 
+                  stroke="#4F46E5" 
+                  strokeWidth={3}
+                  fillOpacity={1} 
+                  fill="url(#colorIncome)" 
+                  animationDuration={1500}
+                />
+                <Area 
+                  name="Expenses"
+                  type="monotone" 
+                  dataKey="expenses" 
+                  stroke="#ef4444" 
+                  strokeWidth={2}
+                  fill="transparent"
+                  animationDuration={1500}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Recent Invoices */}
         <div className="bg-[#121212] border border-[#1E1E1E] rounded-2xl p-8 flex flex-col">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-[11px] font-bold text-text-muted uppercase tracking-[0.15em]">Recent Invoices</h2>
@@ -132,7 +222,6 @@ const DashboardPage = () => {
         </div>
       </div>
 
-      {/* Payment Pipeline */}
       <h2 className="text-lg font-bold text-white tracking-tight mb-6">Payment Pipeline</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <PipelineColumn 
