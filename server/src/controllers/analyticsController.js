@@ -8,16 +8,37 @@ const ApiResponse = require('../utils/apiResponse');
 exports.getFinancialInsights = asyncHandler(async (req, res) => {
   const userId = req.user._id;
   const userObjectId = new mongoose.Types.ObjectId(userId);
+  const { period } = req.query;
+
+  let startDate = new Date(0); // Default to All Time
+  let endDate = new Date();
+
+  const now = new Date();
+  if (period === 'YTD') {
+    startDate = new Date(now.getFullYear(), 0, 1);
+  } else if (!period || period === 'All Time') {
+    // Default 6 months for trend if All Time is too large for UI, 
+    // but here we follow All Time logic.
+    startDate = new Date(0);
+  } else {
+    // Default fallback to 6 months trailing
+    startDate = new Date();
+    startDate.setMonth(startDate.getMonth() - 5);
+    startDate.setDate(1);
+    startDate.setHours(0, 0, 0, 0);
+  }
+
   const userQuery = { $or: [{ user: userObjectId }, { userId: userObjectId }] };
 
-  const sixMonthsAgo = new Date();
-  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 5);
-  sixMonthsAgo.setDate(1);
-  sixMonthsAgo.setHours(0, 0, 0, 0);
-
-  // 1. Revenue vs Expenses Trend (Last 6 Months)
+  // 1. Revenue vs Expenses Trend
   const revenueTrend = await Invoice.aggregate([
-    { $match: { $or: [{ user: userObjectId }, { userId: userObjectId }], status: 'paid', issueDate: { $gte: sixMonthsAgo } } },
+    { 
+      $match: { 
+        ...userQuery, 
+        status: 'paid', 
+        issueDate: { $gte: startDate, $lte: endDate } 
+      } 
+    },
     {
       $group: {
         _id: { month: { $month: '$issueDate' }, year: { $year: '$issueDate' } },
@@ -28,7 +49,12 @@ exports.getFinancialInsights = asyncHandler(async (req, res) => {
   ]);
 
   const expenseTrend = await Expense.aggregate([
-    { $match: { $or: [{ user: userObjectId }, { userId: userObjectId }], date: { $gte: sixMonthsAgo } } },
+    { 
+      $match: { 
+        ...userQuery, 
+        date: { $gte: startDate, $lte: endDate } 
+      } 
+    },
     {
       $group: {
         _id: { month: { $month: '$date' }, year: { $year: '$date' } },
