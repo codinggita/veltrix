@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import PageWrapper from '../../components/layout/PageWrapper';
 import StatCard from '../../components/dashboard/StatCard';
 import axiosInstance from '../../services/axiosInstance';
 import Loader from '../../components/ui/Loader';
+import { formatCurrency, formatDate } from '../../utils/formatters';
 
 const DashboardPage = () => {
+  const navigate = useNavigate();
   const [stats, setStats] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -32,39 +35,48 @@ const DashboardPage = () => {
     );
   }
 
+  // Data mapping from API
+  const metrics = [
+    {
+      title: "Total Revenue",
+      value: formatCurrency(stats?.totalRevenue || 0),
+      description: "Total settled payments",
+      icon: <span className="material-symbols-outlined text-[24px] text-primary">account_balance</span>
+    },
+    {
+      title: "Pending Amount",
+      value: formatCurrency(stats?.pendingAmount || 0),
+      description: `${stats?.totalInvoices || 0} invoices awaiting payment`,
+      icon: <span className="material-symbols-outlined text-[24px] text-warning">hourglass_empty</span>
+    },
+    {
+      title: "Total Clients",
+      value: stats?.totalClients || 0,
+      description: "Active business partners",
+      icon: <span className="material-symbols-outlined text-[24px] text-success">group</span>
+    },
+    {
+      title: "Active Invoices",
+      value: stats?.totalInvoices || 0,
+      description: "Total invoices generated",
+      icon: <span className="material-symbols-outlined text-[24px] text-primary">analytics</span>
+    }
+  ];
+
   return (
     <PageWrapper title="">
       {/* Top Metrics Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <StatCard 
-          title="Total Revenue" 
-          value="12,450.00" 
-          prefix="₹"
-          trend="+12%"
-          description="from last month"
-          icon={<span className="material-symbols-outlined text-[24px] text-primary">account_balance</span>}
-        />
-        <StatCard 
-          title="Pending Payments" 
-          value="2,300.00" 
-          prefix="₹"
-          description="8 invoices awaiting payment"
-          icon={<span className="material-symbols-outlined text-[24px] text-warning">hourglass_empty</span>}
-        />
-        <StatCard 
-          title="Overdue Amount" 
-          value="450.00" 
-          prefix="₹"
-          description="3 accounts past due date"
-          icon={<span className="material-symbols-outlined text-[24px] text-error">priority_high</span>}
-        />
-        <StatCard 
-          title="Monthly Earnings" 
-          value="4,200.00" 
-          prefix="₹"
-          progress={75}
-          icon={<span className="material-symbols-outlined text-[24px] text-primary">analytics</span>}
-        />
+        {metrics.map((m, i) => (
+          <StatCard 
+            key={i}
+            title={m.title} 
+            value={m.value.toString().replace('₹', '')} 
+            prefix={m.value.toString().includes('₹') ? '₹' : ''}
+            description={m.description}
+            icon={m.icon}
+          />
+        ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
@@ -87,23 +99,10 @@ const DashboardPage = () => {
             </div>
           </div>
           
-          <div className="h-64 flex items-end justify-between gap-4 px-2">
-            {[
-              { month: 'JAN', income: 40, expense: 20 },
-              { month: 'FEB', income: 55, expense: 30 },
-              { month: 'MAR', income: 70, expense: 40 },
-              { month: 'APR', income: 85, expense: 35 },
-              { month: 'MAY', income: 60, expense: 45 },
-              { month: 'JUN', income: 75, expense: 25 },
-            ].map((bar, idx) => (
-              <div key={idx} className="flex-1 flex flex-col items-center gap-4">
-                <div className="w-full max-w-[40px] flex flex-col justify-end h-full gap-0.5 rounded-sm overflow-hidden group">
-                  <div className="bg-primary/20 group-hover:bg-primary/40 transition-colors duration-300" style={{ height: `${bar.income}%` }} />
-                  <div className="bg-[#1A1A1A] group-hover:bg-[#222] transition-colors duration-300" style={{ height: `${bar.expense}%` }} />
-                </div>
-                <span className="text-[10px] font-bold text-text-muted tracking-widest">{bar.month}</span>
-              </div>
-            ))}
+          <div className="h-64 flex items-end justify-between gap-4 px-2 text-center">
+            <div className="w-full h-full flex items-center justify-center text-text-muted text-xs italic border border-white/5 border-dashed rounded-xl">
+               Financial trend visualization coming in next update
+            </div>
           </div>
         </div>
 
@@ -111,12 +110,24 @@ const DashboardPage = () => {
         <div className="bg-[#121212] border border-[#1E1E1E] rounded-2xl p-8 flex flex-col">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-[11px] font-bold text-text-muted uppercase tracking-[0.15em]">Recent Invoices</h2>
-            <button className="text-[11px] font-bold text-primary uppercase tracking-wider hover:opacity-80 transition-opacity">View All</button>
+            <button onClick={() => navigate('/app/invoices')} className="text-[11px] font-bold text-primary uppercase tracking-wider hover:opacity-80 transition-opacity">View All</button>
           </div>
           <div className="space-y-6">
-            <InvoiceItem name="Acme Studio" date="Mar 12, 2024" amount="₹1,200.00" status="PAID" />
-            <InvoiceItem name="Global Tech" date="Mar 10, 2024" amount="₹850.00" status="PENDING" />
-            <InvoiceItem name="Nebula Design" date="Mar 05, 2024" amount="₹450.00" status="OVERDUE" />
+            {stats?.recentInvoices?.length > 0 ? (
+              stats.recentInvoices.map((inv) => (
+                <InvoiceItem 
+                  key={inv._id}
+                  name={inv.client?.name || 'Unknown Client'} 
+                  date={formatDate(inv.createdAt)} 
+                  amount={formatCurrency(inv.total)} 
+                  status={inv.status.toUpperCase()} 
+                />
+              ))
+            ) : (
+              <div className="py-10 text-center">
+                <p className="text-xs text-text-muted italic">No recent invoices</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -124,17 +135,54 @@ const DashboardPage = () => {
       {/* Payment Pipeline */}
       <h2 className="text-lg font-bold text-white tracking-tight mb-6">Payment Pipeline</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <PipelineColumn title="PENDING" count={3} color="primary">
-          <PipelineCard id="INV-0042" name="Vanguard Solutions" date="Due Mar 25" amount="₹2,100.00" />
-          <PipelineCard id="INV-0045" name="Creative Flow Ltd" date="Due Mar 28" amount="₹1,150.00" />
+        <PipelineColumn 
+          title="PENDING" 
+          count={stats?.recentInvoices?.filter(i => i.status === 'sent').length || 0} 
+          color="primary"
+        >
+          {stats?.recentInvoices?.filter(i => i.status === 'sent').slice(0, 2).map(inv => (
+             <PipelineCard 
+                key={inv._id}
+                id={inv.invoiceNumber} 
+                name={inv.client?.name} 
+                date={`Due ${formatDate(inv.dueDate, { month: 'short', day: 'numeric' })}`} 
+                amount={formatCurrency(inv.total)} 
+             />
+          ))}
         </PipelineColumn>
 
-        <PipelineColumn title="OVERDUE" count={1} color="error">
-          <PipelineCard id="INV-0039" name="Atlas Corp" date="5 Days Past Due" amount="₹450.00" urgent />
+        <PipelineColumn 
+          title="OVERDUE" 
+          count={stats?.recentInvoices?.filter(i => i.status === 'overdue').length || 0} 
+          color="error"
+        >
+          {stats?.recentInvoices?.filter(i => i.status === 'overdue').slice(0, 2).map(inv => (
+             <PipelineCard 
+                key={inv._id}
+                id={inv.invoiceNumber} 
+                name={inv.client?.name} 
+                date="Past Due" 
+                amount={formatCurrency(inv.total)} 
+                urgent 
+             />
+          ))}
         </PipelineColumn>
 
-        <PipelineColumn title="RECENTLY PAID" count={12} color="success">
-          <PipelineCard id="INV-0038" name="Swift Logistics" date="Received Mar 14" amount="₹3,400.00" settled />
+        <PipelineColumn 
+          title="RECENTLY PAID" 
+          count={stats?.recentInvoices?.filter(i => i.status === 'paid').length || 0} 
+          color="success"
+        >
+          {stats?.recentInvoices?.filter(i => i.status === 'paid').slice(0, 2).map(inv => (
+             <PipelineCard 
+                key={inv._id}
+                id={inv.invoiceNumber} 
+                name={inv.client?.name} 
+                date={`Paid ${formatDate(inv.updatedAt || inv.createdAt, { month: 'short', day: 'numeric' })}`} 
+                amount={formatCurrency(inv.total)} 
+                settled 
+             />
+          ))}
         </PipelineColumn>
       </div>
     </PageWrapper>
@@ -155,7 +203,7 @@ const InvoiceItem = ({ name, date, amount, status }) => (
     <div className="text-right">
       <div className="text-sm font-bold text-white tracking-tight">{amount}</div>
       <div className={`text-[8px] font-black uppercase tracking-widest mt-1 ${
-        status === 'PAID' ? 'text-success' : status === 'PENDING' ? 'text-warning' : 'text-error'
+        status === 'PAID' ? 'text-success' : status === 'PENDING' || status === 'SENT' ? 'text-warning' : 'text-error'
       }`}>{status}</div>
     </div>
   </div>
@@ -168,7 +216,10 @@ const PipelineColumn = ({ title, count, color, children }) => (
       <h3 className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em]">{title}</h3>
       <span className="ml-auto bg-[#1A1A1A] text-text-muted text-[10px] font-bold px-2 py-0.5 rounded-full border border-[#2A2A2A]">{count}</span>
     </div>
-    <div className="space-y-4">{children}</div>
+    <div className="space-y-4">
+       {children}
+       {count === 0 && <div className="p-6 border border-[#1E1E1E] border-dashed rounded-2xl text-center text-[10px] text-text-muted uppercase tracking-widest font-bold">Clear</div>}
+    </div>
   </div>
 );
 

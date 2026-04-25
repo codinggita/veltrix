@@ -13,7 +13,7 @@ import { createInvoice } from '../../store/slices/invoiceSlice';
 const CreateInvoicePage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { clients } = useSelector((state) => state.clients || state.client);
+  const { clients } = useSelector((state) => state.client);
   const { user } = useSelector((state) => state.auth);
   
   const [formData, setFormData] = useState({

@@ -20,6 +20,7 @@ const Sidebar = () => {
     { name: 'Invoices', icon: 'description', path: '/app/invoices' },
     { name: 'Clients', icon: 'group', path: '/app/clients' },
     { name: 'Payments', icon: 'payments', path: '/app/payments' },
+    { name: 'Expenses', icon: 'receipt', path: '/app/expenses' }, // Fix 10: Added Expenses
     { name: 'Analytics', icon: 'analytics', path: '/app/analytics' },
     { name: 'Settings', icon: 'settings', path: '/app/settings' },
   ];
@@ -61,7 +62,11 @@ const Sidebar = () => {
 
       {/* Footer Actions */}
       <div className="p-6 space-y-6">
-        <button className="w-full bg-primary text-white font-black py-4 rounded-xl shadow-lg hover:shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3">
+        {/* Fix 10: Added onClick navigation */}
+        <button 
+          onClick={() => navigate('/app/invoices/create')}
+          className="w-full bg-primary text-white font-black py-4 rounded-xl shadow-lg hover:shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3"
+        >
           <span className="material-symbols-outlined text-[20px]">add</span>
           <span className="text-sm uppercase tracking-widest">Create Invoice</span>
         </button>

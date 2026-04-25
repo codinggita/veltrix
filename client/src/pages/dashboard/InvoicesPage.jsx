@@ -11,7 +11,7 @@ import { toast } from 'react-hot-toast';
 const InvoicesPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { invoices, isLoading } = useSelector((state) => state.invoices || state.invoice);
+  const { invoices, isLoading } = useSelector((state) => state.invoices);
   const [filter, setFilter] = useState('all');
 
   useEffect(() => {
