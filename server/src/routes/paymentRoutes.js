@@ -5,10 +5,10 @@ const protect = require('../middleware/authMiddleware');
 
 router.use(protect);
 
+router.get('/stats', getPaymentStats);
+
 router.route('/')
   .get(getPayments)
   .post(createPayment);
-
-router.get('/stats', getPaymentStats);
 
 module.exports = router;
