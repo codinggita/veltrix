@@ -20,23 +20,23 @@ const Sidebar = () => {
     { name: 'Invoices', icon: 'description', path: '/app/invoices' },
     { name: 'Clients', icon: 'group', path: '/app/clients' },
     { name: 'Payments', icon: 'payments', path: '/app/payments' },
-    { name: 'Expenses', icon: 'receipt', path: '/app/expenses' }, // Fix 10: Added Expenses
+    { name: 'Expenses', icon: 'receipt', path: '/app/expenses' },
     { name: 'Analytics', icon: 'analytics', path: '/app/analytics' },
     { name: 'Settings', icon: 'settings', path: '/app/settings' },
   ];
 
   return (
-    <div className="w-[280px] h-screen bg-[#0F0F0F] border-r border-[#1E1E1E] flex flex-col sticky top-0">
+    <div className="w-[280px] h-[100dvh] bg-[#0F0F0F] border-r border-[#1E1E1E] flex flex-col sticky top-0 overflow-hidden">
       {/* Logo */}
-      <div className="p-8 mb-4">
+      <div className="p-8 pb-4">
         <Link to="/" className="flex items-center gap-2 group cursor-pointer">
           <span className="material-symbols-outlined text-primary text-3xl transition-transform group-hover:rotate-12">currency_exchange</span>
           <h1 className="text-2xl font-black text-white tracking-tighter font-headline">Veltrix</h1>
         </Link>
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 px-4 space-y-2">
+      {/* Navigation - Scrollable area */}
+      <nav className="flex-1 px-4 space-y-2 overflow-y-auto scrollbar-hide py-4">
         {menuItems.map((item) => {
           const isActive = location.pathname === item.path;
           return (
@@ -60,28 +60,27 @@ const Sidebar = () => {
         })}
       </nav>
 
-      {/* Footer Actions */}
-      <div className="p-6 space-y-6">
-        {/* Fix 10: Added onClick navigation */}
+      {/* Footer Actions - Fixed area */}
+      <div className="p-4 space-y-4 border-t border-[#1E1E1E]">
         <button 
           onClick={() => navigate('/app/invoices/create')}
-          className="w-full bg-primary text-white font-black py-4 rounded-xl shadow-lg hover:shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3"
+          className="w-full bg-primary text-white font-black py-3.5 rounded-xl shadow-lg hover:shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3"
         >
           <span className="material-symbols-outlined text-[20px]">add</span>
           <span className="text-sm uppercase tracking-widest">Create Invoice</span>
         </button>
 
-        <div className="flex items-center justify-between p-2">
+        <div className="flex items-center justify-between p-2 bg-white/5 rounded-2xl border border-white/5">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-primary/40 border border-[#2A2A2A] overflow-hidden flex items-center justify-center">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-primary/40 border border-[#2A2A2A] overflow-hidden flex items-center justify-center shrink-0">
                <img src={`https://api.dicebear.com/7.x/identicon/svg?seed=${user?.name || 'Veltrix'}`} alt="Avatar" className="w-full h-full object-cover" />
             </div>
-            <div className="max-w-[120px]">
+            <div className="min-w-0">
               <div className="text-xs font-black text-white leading-tight truncate">{user?.name || 'User'}</div>
               <div className="text-[10px] text-text-muted font-bold mt-0.5 truncate uppercase tracking-widest">{user?.businessName || 'Sovereign Head'}</div>
             </div>
           </div>
-          <button onClick={handleLogout} className="text-text-muted hover:text-rose-500 transition-colors" title="Logout">
+          <button onClick={handleLogout} className="text-text-muted hover:text-rose-500 transition-colors shrink-0" title="Logout">
             <span className="material-symbols-outlined text-[20px]">logout</span>
           </button>
         </div>

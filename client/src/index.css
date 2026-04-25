@@ -61,6 +61,14 @@
   text-shadow: 0 0 20px rgba(79, 70, 229, 0.3);
 }
 
+@utility scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @utility tabular-nums {
   font-variant-numeric: tabular-nums;
 }
