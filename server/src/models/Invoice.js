@@ -65,18 +65,20 @@ const invoiceSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Auto-calculate subtotal and total before saving
-invoiceSchema.pre('save', function(next) {
+// Auto-calculate subtotal and total before validation
+invoiceSchema.pre('validate', function(next) {
   // 1. Calculate individual item amounts
-  this.items.forEach(item => {
-    item.amount = (item.quantity || 1) * (item.unitPrice || 0);
-  });
+  if (this.items && this.items.length > 0) {
+    this.items.forEach(item => {
+      item.amount = (item.quantity || 1) * (item.unitPrice || 0);
+    });
 
-  // 2. Calculate subtotal from item amounts
-  this.subtotal = this.items.reduce((acc, item) => acc + item.amount, 0);
+    // 2. Calculate subtotal from item amounts
+    this.subtotal = this.items.reduce((acc, item) => acc + item.amount, 0);
+  }
 
   // 3. Calculate total
-  this.total = this.subtotal + (this.tax || 0);
+  this.total = (this.subtotal || 0) + (Number(this.tax) || 0);
   
   next();
 });
