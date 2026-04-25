@@ -52,7 +52,7 @@ const AnalyticsPage = () => {
         </div>
         
         <div className="flex bg-[#1E1E1E] p-1 rounded-xl border border-[#2E2E2E]">
-          {['YTD', 'Q3 2023', 'All Time'].map((filter) => (
+          {['YTD', 'All Time'].map((filter) => (
             <button
               key={filter}
               onClick={() => setActiveFilter(filter)}

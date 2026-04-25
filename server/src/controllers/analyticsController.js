@@ -16,9 +16,6 @@ exports.getFinancialInsights = asyncHandler(async (req, res) => {
   const now = new Date();
   if (period === 'YTD') {
     startDate = new Date(now.getFullYear(), 0, 1);
-  } else if (period === 'Q3 2023') {
-    startDate = new Date(2023, 6, 1); // July 1
-    endDate = new Date(2023, 8, 30, 23, 59, 59); // Sept 30
   } else if (!period || period === 'All Time') {
     // Default 6 months for trend if All Time is too large for UI, 
     // but here we follow All Time logic.
