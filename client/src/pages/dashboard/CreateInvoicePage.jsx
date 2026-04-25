@@ -19,6 +19,7 @@ const CreateInvoicePage = () => {
   const [formData, setFormData] = useState({
     client: '',
     dueDate: '',
+    status: 'draft',
     items: [{ description: '', quantity: 1, unitPrice: 0 }],
     notes: '',
     tax: 0,
@@ -66,11 +67,11 @@ const CreateInvoicePage = () => {
         <div className="flex-1 space-y-8">
           <div className="glass-panel p-8 rounded-3xl border border-white/5 space-y-8">
             <div className="grid grid-cols-12 gap-6">
-              <div className="col-span-4 space-y-2">
+              <div className="col-span-3 space-y-2">
                 <label className="text-[10px] font-black text-text-muted uppercase tracking-widest">Invoice #</label>
                 <Input value={formData.invoiceNumber} onChange={(e) => setFormData({...formData, invoiceNumber: e.target.value})} className="!py-3" />
               </div>
-              <div className="col-span-5 space-y-2">
+              <div className="col-span-4 space-y-2">
                 <label className="text-[10px] font-black text-text-muted uppercase tracking-widest">Client</label>
                 <select 
                   className="w-full bg-[#1A1A1A] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-primary appearance-none cursor-pointer"
@@ -84,6 +85,19 @@ const CreateInvoicePage = () => {
               <div className="col-span-3 space-y-2">
                 <label className="text-[10px] font-black text-text-muted uppercase tracking-widest">Due Date</label>
                 <input type="date" className="w-full bg-[#1A1A1A] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-primary outline-none" value={formData.dueDate} onChange={(e) => setFormData({...formData, dueDate: e.target.value})} />
+              </div>
+              <div className="col-span-2 space-y-2">
+                <label className="text-[10px] font-black text-text-muted uppercase tracking-widest">Status</label>
+                <select 
+                  className="w-full bg-[#1A1A1A] border border-white/10 rounded-xl px-4 py-3 text-[10px] font-black uppercase text-white focus:outline-none focus:border-primary appearance-none cursor-pointer"
+                  value={formData.status}
+                  onChange={(e) => setFormData({...formData, status: e.target.value})}
+                >
+                  <option value="draft">Draft</option>
+                  <option value="sent">Sent</option>
+                  <option value="paid">Paid</option>
+                  <option value="overdue">Overdue</option>
+                </select>
               </div>
             </div>
 
