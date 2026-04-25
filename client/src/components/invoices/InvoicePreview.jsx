@@ -36,10 +36,18 @@ const InvoicePreview = ({ formData, selectedClient, user, subtotal, total }) => 
             {selectedClient?.email || 'network@veltrix.os'}
           </div>
         </div>
-        <div className="text-right py-2">
+        <div className="text-right py-2 space-y-4">
           <div className="space-y-1">
             <h4 className="text-[9px] font-black text-white/20 uppercase tracking-[0.2em]">SETTLEMENT DATE</h4>
             <p className="text-[12px] font-black text-white">{formData.dueDate || 'PENDING'}</p>
+          </div>
+          <div className="space-y-1">
+            <h4 className="text-[9px] font-black text-white/20 uppercase tracking-[0.2em]">STATUS</h4>
+            <p className={`text-[10px] font-black uppercase tracking-widest ${
+              formData.status === 'paid' ? 'text-success' : 
+              formData.status === 'overdue' ? 'text-error' : 
+              formData.status === 'sent' ? 'text-primary' : 'text-white/40'
+            }`}>{formData.status}</p>
           </div>
         </div>
       </div>
