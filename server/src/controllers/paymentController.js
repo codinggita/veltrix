@@ -1,5 +1,6 @@
 const Payment = require('../models/Payment');
 const Invoice = require('../models/Invoice');
+const mongoose = require('mongoose');
 const asyncHandler = require('../utils/asyncHandler');
 const ApiError = require('../utils/apiError');
 const ApiResponse = require('../utils/apiResponse');
@@ -8,7 +9,8 @@ const ApiResponse = require('../utils/apiResponse');
 // @route   GET /api/v1/payments
 // @access  Private
 exports.getPayments = asyncHandler(async (req, res) => {
-  const payments = await Payment.find({ user: req.user._id })
+  const userId = req.user._id;
+  const payments = await Payment.find({ $or: [{ user: userId }, { userId: userId }] })
     .populate('client', 'name email')
     .populate('invoice', 'invoiceNumber')
     .sort({ date: -1 });
@@ -23,9 +25,10 @@ exports.getPayments = asyncHandler(async (req, res) => {
 // @access  Private
 exports.getPaymentStats = asyncHandler(async (req, res) => {
   const userId = req.user._id;
+  const userObjectId = new mongoose.Types.ObjectId(userId);
 
   const stats = await Payment.aggregate([
-    { $match: { user: userId } },
+    { $match: { $or: [{ user: userObjectId }, { userId: userObjectId }] } },
     {
       $group: {
         _id: '$status',
@@ -57,7 +60,6 @@ exports.getPaymentStats = asyncHandler(async (req, res) => {
 exports.createPayment = asyncHandler(async (req, res) => {
   const { client, invoice, amount, method, status, date, notes } = req.body;
 
-  // Fix 15: Improved transaction ID generation
   const transactionId = `TXN-${Date.now()}-${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
 
   const payment = await Payment.create({
@@ -72,7 +74,6 @@ exports.createPayment = asyncHandler(async (req, res) => {
     notes
   });
 
-  // If payment is "Paid" and linked to an invoice, update invoice status
   if (status === 'Paid' && invoice) {
     await Invoice.findByIdAndUpdate(invoice, { status: 'paid' });
   }

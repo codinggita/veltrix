@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Client = require('../models/Client');
 const Invoice = require('../models/Invoice');
 const asyncHandler = require('../utils/asyncHandler');
@@ -8,14 +9,19 @@ const ApiResponse = require('../utils/apiResponse');
 // @access  Private
 exports.getDashboardStats = asyncHandler(async (req, res) => {
   const userId = req.user._id;
+  // Aggregate needs explicit ObjectId casting if userId is a string
+  const userObjectId = new mongoose.Types.ObjectId(userId);
 
-  // Fix 1: using correct fields for Client (userId) and Invoice (user)
-  const totalClients = await Client.countDocuments({ userId });
-  const totalInvoices = await Invoice.countDocuments({ user: userId });
+  // Fix: Supporting both user and userId fields for backward compatibility
+  const userQuery = { $or: [{ user: userObjectId }, { userId: userObjectId }] };
+  const clientQuery = { $or: [{ user: userObjectId }, { userId: userObjectId }] };
+
+  const totalClients = await Client.countDocuments(clientQuery);
+  const totalInvoices = await Invoice.countDocuments(userQuery);
   
   // Real aggregation for revenue
   const revenueStats = await Invoice.aggregate([
-    { $match: { user: userId } },
+    { $match: { $or: [{ user: userObjectId }, { userId: userObjectId }] } },
     {
       $group: {
         _id: null,
@@ -32,12 +38,12 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
   const totalRevenue = revenueStats[0]?.totalRevenue || 0;
   const pendingAmount = revenueStats[0]?.pendingAmount || 0;
 
-  const recentClients = await Client.find({ userId })
+  const recentClients = await Client.find(clientQuery)
     .sort('-createdAt')
     .limit(5)
     .lean();
 
-  const recentInvoices = await Invoice.find({ user: userId })
+  const recentInvoices = await Invoice.find(userQuery)
     .populate('client', 'name')
     .sort('-createdAt')
     .limit(5)
@@ -51,7 +57,7 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
       pendingAmount,
       recentClients,
       recentInvoices,
-      recentActivity: recentInvoices, // Prefer recent invoices for activity
+      recentActivity: recentInvoices,
     }, "Dashboard stats fetched successfully")
   );
 });

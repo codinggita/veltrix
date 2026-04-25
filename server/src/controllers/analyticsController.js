@@ -7,6 +7,9 @@ const ApiResponse = require('../utils/apiResponse');
 
 exports.getFinancialInsights = asyncHandler(async (req, res) => {
   const userId = req.user._id;
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+  const userQuery = { $or: [{ user: userObjectId }, { userId: userObjectId }] };
+
   const sixMonthsAgo = new Date();
   sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 5);
   sixMonthsAgo.setDate(1);
@@ -14,7 +17,7 @@ exports.getFinancialInsights = asyncHandler(async (req, res) => {
 
   // 1. Revenue vs Expenses Trend (Last 6 Months)
   const revenueTrend = await Invoice.aggregate([
-    { $match: { user: userId, status: 'paid', issueDate: { $gte: sixMonthsAgo } } },
+    { $match: { $or: [{ user: userObjectId }, { userId: userObjectId }], status: 'paid', issueDate: { $gte: sixMonthsAgo } } },
     {
       $group: {
         _id: { month: { $month: '$issueDate' }, year: { $year: '$issueDate' } },
@@ -25,7 +28,7 @@ exports.getFinancialInsights = asyncHandler(async (req, res) => {
   ]);
 
   const expenseTrend = await Expense.aggregate([
-    { $match: { user: userId, date: { $gte: sixMonthsAgo } } },
+    { $match: { $or: [{ user: userObjectId }, { userId: userObjectId }], date: { $gte: sixMonthsAgo } } },
     {
       $group: {
         _id: { month: { $month: '$date' }, year: { $year: '$date' } },
@@ -37,7 +40,7 @@ exports.getFinancialInsights = asyncHandler(async (req, res) => {
 
   // 2. Client Concentration (Top 5)
   const clientConcentration = await Invoice.aggregate([
-    { $match: { user: userId, status: 'paid' } },
+    { $match: { $or: [{ user: userObjectId }, { userId: userObjectId }], status: 'paid' } },
     {
       $group: {
         _id: '$client',
@@ -66,17 +69,15 @@ exports.getFinancialInsights = asyncHandler(async (req, res) => {
   // 3. A/R Aging (Unpaid Invoices)
   const today = new Date();
   const thirtyDaysAgo = new Date(today); thirtyDaysAgo.setDate(today.getDate() - 30);
-  const sixtyDaysAgo = new Date(today); sixtyDaysAgo.setDate(today.getDate() - 60);
 
-  // Fix 4: using dueDate for aging
   const arAging = await Invoice.aggregate([
-    { $match: { user: userId, status: { $in: ['sent', 'overdue'] } } },
+    { $match: { $or: [{ user: userObjectId }, { userId: userObjectId }], status: { $in: ['sent', 'overdue'] } } },
     {
       $project: {
         total: 1,
         ageGroup: {
           $cond: [
-            { $gte: ['$dueDate', today] }, 'Current', // Not yet due
+            { $gte: ['$dueDate', today] }, 'Current',
             { $cond: [{ $gte: ['$dueDate', thirtyDaysAgo] }, '1-30 Days', '> 30 Days'] }
           ]
         }
@@ -102,24 +103,24 @@ exports.getFinancialInsights = asyncHandler(async (req, res) => {
 
 exports.getGrowthVelocity = asyncHandler(async (req, res) => {
   const userId = req.user._id;
+  const userObjectId = new mongoose.Types.ObjectId(userId);
   const now = new Date();
   const startOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
 
   const currentMonthRevenue = await Invoice.aggregate([
-    { $match: { user: userId, status: 'paid', issueDate: { $gte: startOfCurrentMonth } } },
+    { $match: { $or: [{ user: userObjectId }, { userId: userObjectId }], status: 'paid', issueDate: { $gte: startOfCurrentMonth } } },
     { $group: { _id: null, total: { $sum: '$total' } } }
   ]);
 
   const lastMonthRevenue = await Invoice.aggregate([
-    { $match: { user: userId, status: 'paid', issueDate: { $gte: startOfLastMonth, $lt: startOfCurrentMonth } } },
+    { $match: { $or: [{ user: userObjectId }, { userId: userObjectId }], status: 'paid', issueDate: { $gte: startOfLastMonth, $lt: startOfCurrentMonth } } },
     { $group: { _id: null, total: { $sum: '$total' } } }
   ]);
 
   const currentTotal = currentMonthRevenue[0]?.total || 0;
   const lastTotal = lastMonthRevenue[0]?.total || 0;
   
-  // Growth %
   const growth = lastTotal === 0 ? (currentTotal > 0 ? 100 : 0) : ((currentTotal - lastTotal) / lastTotal) * 100;
 
   return res.status(200).json(
