@@ -66,7 +66,7 @@ const invoiceSchema = new mongoose.Schema({
 });
 
 // Auto-calculate subtotal and total before validation
-invoiceSchema.pre('validate', function(next) {
+invoiceSchema.pre('validate', async function() {
   // 1. Calculate individual item amounts
   if (this.items && this.items.length > 0) {
     this.items.forEach(item => {
@@ -79,8 +79,6 @@ invoiceSchema.pre('validate', function(next) {
 
   // 3. Calculate total
   this.total = (this.subtotal || 0) + (Number(this.tax) || 0);
-  
-  next();
 });
 
 module.exports = mongoose.model('Invoice', invoiceSchema);
