@@ -34,6 +34,17 @@ export const getPaymentStats = createAsyncThunk('payments/getStats', async (_, t
   }
 });
 
+// Fix 13: Added createPayment thunk
+export const createPayment = createAsyncThunk('payments/create', async (paymentData, thunkAPI) => {
+  try {
+    const response = await paymentService.createPayment(paymentData);
+    return response.data;
+  } catch (error) {
+    const message = error.response?.data?.message || error.message || error.toString();
+    return thunkAPI.rejectWithValue(message);
+  }
+});
+
 export const paymentSlice = createSlice({
   name: 'payments',
   initialState,
@@ -62,6 +73,20 @@ export const paymentSlice = createSlice({
       })
       .addCase(getPaymentStats.fulfilled, (state, action) => {
         state.stats = action.payload.data || action.payload;
+      })
+      .addCase(createPayment.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(createPayment.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        const newPayment = action.payload.data || action.payload;
+        state.payments.unshift(newPayment);
+      })
+      .addCase(createPayment.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
       });
   },
 });
