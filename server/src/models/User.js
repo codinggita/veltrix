@@ -26,6 +26,11 @@ const userSchema = new mongoose.Schema({
     zipCode: { type: String, trim: true },
     country: { type: String, trim: true },
   },
+  notifications: {
+    paymentReceipts: { type: Boolean, default: true },
+    clientActivity: { type: Boolean, default: true },
+    systemUpdates: { type: Boolean, default: true },
+  },
   createdAt: { type: Date, default: Date.now }
 });
 
