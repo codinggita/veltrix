@@ -86,13 +86,15 @@ const DashboardPage = () => {
   const metrics = [
     {
       title: "Total Revenue",
-      value: formatCurrency(stats?.totalRevenue || 0),
+      value: stats?.totalRevenue || 0,
+      prefix: "₹",
       description: "Total settled payments",
       icon: <span className="material-symbols-outlined text-[24px] text-primary">account_balance</span>
     },
     {
       title: "Pending Amount",
-      value: formatCurrency(stats?.pendingAmount || 0),
+      value: stats?.pendingAmount || 0,
+      prefix: "₹",
       description: `${stats?.totalInvoices || 0} invoices awaiting payment`,
       icon: <span className="material-symbols-outlined text-[24px] text-warning">hourglass_empty</span>
     },
@@ -117,8 +119,8 @@ const DashboardPage = () => {
           <StatCard 
             key={i}
             title={m.title} 
-            value={m.value.toString().replace('₹', '')} 
-            prefix={m.value.toString().includes('₹') ? '₹' : ''}
+            value={m.value} 
+            prefix={m.prefix}
             description={m.description}
             icon={m.icon}
           />
