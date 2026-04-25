@@ -17,8 +17,15 @@ exports.updateProfile = async (req, res) => {
       
       if (req.body.address) {
         user.address = {
-          ...user.address,
+          ...(user.address || {}),
           ...req.body.address
+        };
+      }
+
+      if (req.body.notifications) {
+        user.notifications = {
+          ...(user.notifications || {}),
+          ...req.body.notifications
         };
       }
 
@@ -35,6 +42,7 @@ exports.updateProfile = async (req, res) => {
           taxId: updatedUser.taxId,
           logoUrl: updatedUser.logoUrl,
           address: updatedUser.address,
+          notifications: updatedUser.notifications,
           createdAt: updatedUser.createdAt,
         },
       });
