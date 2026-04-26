@@ -6,7 +6,15 @@ const uiSlice = createSlice({
     theme: 'dark',
     sidebarOpen: true,
   },
-  reducers: {},
+  reducers: {
+    toggleSidebar: (state) => {
+      state.sidebarOpen = !state.sidebarOpen;
+    },
+    setSidebarOpen: (state, action) => {
+      state.sidebarOpen = action.payload;
+    }
+  },
 });
 
+export const { toggleSidebar, setSidebarOpen } = uiSlice.actions;
 export default uiSlice.reducer;
