@@ -114,7 +114,7 @@ const DashboardPage = () => {
 
   return (
     <PageWrapper title="">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {metrics.map((m, i) => (
           <StatCard 
             key={i}
@@ -127,16 +127,16 @@ const DashboardPage = () => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
-        <div className="lg:col-span-2 bg-[#121212] border border-[#1E1E1E] rounded-2xl p-8">
-          <div className="flex justify-between items-start mb-6">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-10">
+        <div className="xl:col-span-2 bg-[#121212] border border-[#1E1E1E] rounded-2xl p-6 md:p-8">
+          <div className="flex flex-col sm:flex-row justify-between items-start mb-6 gap-4">
             <div>
               <h2 className="text-lg font-bold text-white tracking-tight">Cash Flow Analytics</h2>
               <p className="text-xs text-text-muted font-medium mt-1">Overview of income vs operating expenses</p>
             </div>
           </div>
           
-          <div className="h-72">
+          <div className="h-64 sm:h-72">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
@@ -224,8 +224,8 @@ const DashboardPage = () => {
         </div>
       </div>
 
-      <h2 className="text-lg font-bold text-white tracking-tight mb-6">Payment Pipeline</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <h2 className="text-lg font-bold text-white tracking-tight mb-6 px-2 md:px-0">Payment Pipeline</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         <PipelineColumn 
           title="PENDING" 
           count={stats?.recentInvoices?.filter(i => i.status === 'sent').length || 0} 

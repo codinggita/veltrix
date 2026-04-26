@@ -44,14 +44,14 @@ const AnalyticsPage = () => {
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="space-y-6 md:space-y-8 animate-in fade-in duration-500 pb-10">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-4xl font-black text-white tracking-tight font-headline">Insights</h1>
-          <p className="text-gray-400 mt-1">Comprehensive overview of financial performance.</p>
+          <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight font-headline">Insights</h1>
+          <p className="text-gray-400 mt-1 text-sm md:text-base">Comprehensive overview of financial performance.</p>
         </div>
         
-        <div className="flex bg-[#1E1E1E] p-1 rounded-xl border border-[#2E2E2E]">
+        <div className="flex bg-[#1E1E1E] p-1 rounded-xl border border-[#2E2E2E] w-fit">
           {['YTD', 'All Time'].map((filter) => (
             <button
               key={filter}
@@ -66,46 +66,46 @@ const AnalyticsPage = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-[#161616] border border-[#262626] rounded-3xl p-8">
-          <div className="flex items-center justify-between mb-8">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 md:gap-8">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-[#161616] border border-[#262626] rounded-3xl p-6 md:p-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
             <div>
               <h3 className="text-xl font-bold text-white">Revenue vs Expenses</h3>
               <p className="text-sm text-gray-500">Filtered by {activeFilter}</p>
             </div>
-            <div className="flex items-center gap-4 text-xs">
-              <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#6366f1]"></div><span className="text-gray-400">Revenue</span></div>
-              <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#f43f5e]"></div><span className="text-gray-400">Expense</span></div>
+            <div className="flex items-center gap-4 text-[10px] md:text-xs">
+              <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-[#6366f1]"></div><span className="text-gray-400 uppercase tracking-wider font-bold">Revenue</span></div>
+              <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-[#f43f5e]"></div><span className="text-gray-400 uppercase tracking-wider font-bold">Expense</span></div>
             </div>
           </div>
           <RevenueTrendChart data={data} />
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-[#161616] border border-[#262626] rounded-3xl p-8">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-[#161616] border border-[#262626] rounded-3xl p-6 md:p-8">
           <div className="flex items-center justify-between mb-8">
             <div>
               <h3 className="text-xl font-bold text-white">Client Concentration</h3>
-              <p className="text-sm text-gray-500">Revenue by top accounts</p>
+              <p className="text-sm text-gray-500 text-nowrap">Revenue by top accounts</p>
             </div>
           </div>
           <ClientConcentrationChart data={data?.clientConcentration} colors={COLORS} />
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-[#161616] border border-[#262626] rounded-3xl p-8">
-          <div className="flex items-center justify-between mb-8">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-[#161616] border border-[#262626] rounded-3xl p-6 md:p-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
             <div>
               <h3 className="text-xl font-bold text-white">A/R Aging</h3>
               <p className="text-sm text-gray-500">Outstanding invoices by age</p>
             </div>
-            <div className="flex flex-col items-end">
-              <span className="text-2xl font-black text-white">₹{data?.arAging.reduce((a, b) => a + b.amount, 0).toLocaleString()}</span>
-              <span className="text-[10px] uppercase tracking-widest text-rose-400 font-bold">Total Unpaid</span>
+            <div className="flex flex-col items-end shrink-0">
+              <span className="text-xl md:text-2xl font-black text-white">₹{data?.arAging.reduce((a, b) => a + b.amount, 0).toLocaleString()}</span>
+              <span className="text-[9px] uppercase tracking-widest text-rose-400 font-bold">Total Unpaid</span>
             </div>
           </div>
           <ARAgingChart data={data?.arAging} />
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="bg-[#161616] border border-[#262626] rounded-3xl p-8 flex flex-col relative overflow-hidden">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="bg-[#161616] border border-[#262626] rounded-3xl p-6 md:p-8 flex flex-col relative overflow-hidden">
           <div className="flex items-center justify-between mb-auto">
             <div>
               <h3 className="text-xl font-bold text-white">Growth Velocity</h3>
@@ -116,7 +116,7 @@ const AnalyticsPage = () => {
             </div>
           </div>
           <div className="mt-8">
-            <div className="text-4xl font-black text-white">₹{velocity?.currentMonthMRR.toLocaleString()}</div>
+            <div className="text-3xl md:text-4xl font-black text-white">₹{velocity?.currentMonthMRR.toLocaleString()}</div>
             <div className="text-sm text-gray-500 mt-1">Current Month MRR</div>
           </div>
         </motion.div>
