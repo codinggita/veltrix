@@ -89,7 +89,7 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
   const recentInvoices = await Invoice.find(userQuery)
     .populate('client', 'name')
     .sort('-createdAt')
-    .limit(5)
+    .limit(20)
     .lean();
 
   return res.status(200).json(
