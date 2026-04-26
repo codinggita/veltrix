@@ -41,7 +41,7 @@ const Sidebar = () => {
           ))}
         </nav>
         <div className="p-4 space-y-4 border-t border-[#1E1E1E]">
-          <button onClick={() => navigate('/app/invoices/create')} className="w-full bg-primary text-white font-black py-3.5 rounded-xl shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3">
+          <button onClick={() => { navigate('/app/invoices/create'); if(window.innerWidth < 1024) dispatch(setSidebarOpen(false)); }} className="w-full bg-primary text-white font-black py-3.5 rounded-xl shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3">
             <span className="material-symbols-outlined text-[20px]">add</span><span className="text-sm uppercase tracking-widest">Create Invoice</span>
           </button>
           <div className="flex items-center justify-between p-2 bg-white/5 rounded-2xl border border-white/5">
