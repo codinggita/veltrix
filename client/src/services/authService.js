@@ -2,16 +2,16 @@ import axiosInstance from './axiosInstance';
 
 const register = async (userData) => {
   const response = await axiosInstance.post('/auth/register', userData);
-  if (response.data.token) {
-    localStorage.setItem('veltrix_token', response.data.token);
+  if (response.data.data?.token) {
+    localStorage.setItem('veltrix_token', response.data.data.token);
   }
   return response.data;
 };
 
 const login = async (userData) => {
   const response = await axiosInstance.post('/auth/login', userData);
-  if (response.data.token) {
-    localStorage.setItem('veltrix_token', response.data.token);
+  if (response.data.data?.token) {
+    localStorage.setItem('veltrix_token', response.data.data.token);
   }
   return response.data;
 };
