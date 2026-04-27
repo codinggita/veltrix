@@ -9,19 +9,18 @@ const ApiResponse = require('../utils/apiResponse');
 // @access  Private
 exports.getInvoices = asyncHandler(async (req, res) => {
   const userId = req.user._id;
-  const userQuery = { $or: [{ user: userId }, { userId: userId }] };
 
   // Auto-update overdue invoices
   await Invoice.updateMany(
     { 
-      ...userQuery, 
+      user: userId, 
       status: 'sent', 
       dueDate: { $lt: new Date() } 
     },
     { status: 'overdue' }
   );
 
-  const invoices = await Invoice.find(userQuery)
+  const invoices = await Invoice.find({ user: userId })
     .populate('client', 'name email')
     .sort({ createdAt: -1 });
 
@@ -37,7 +36,7 @@ exports.getInvoice = asyncHandler(async (req, res) => {
   const userId = req.user._id;
   const invoice = await Invoice.findOne({ 
     _id: req.params.id, 
-    $or: [{ user: userId }, { userId: userId }] 
+    user: userId 
   }).populate('client', 'name email address');
 
   if (!invoice) {
@@ -69,7 +68,7 @@ exports.createInvoice = asyncHandler(async (req, res) => {
   // Check if invoice number exists
   const existing = await Invoice.findOne({ 
     invoiceNumber, 
-    $or: [{ user: userId }, { userId: userId }] 
+    user: userId 
   });
   
   if (existing) {
@@ -100,7 +99,7 @@ exports.updateStatus = asyncHandler(async (req, res) => {
   const userId = req.user._id;
   
   const invoice = await Invoice.findOneAndUpdate(
-    { _id: req.params.id, $or: [{ user: userId }, { userId: userId }] },
+    { _id: req.params.id, user: userId },
     { status },
     { new: true, runValidators: true }
   );
@@ -123,7 +122,7 @@ exports.updateInvoice = asyncHandler(async (req, res) => {
 
   const invoice = await Invoice.findOne({ 
     _id: req.params.id, 
-    $or: [{ user: userId }, { userId: userId }] 
+    user: userId 
   });
 
   if (!invoice) {
@@ -155,7 +154,7 @@ exports.deleteInvoice = asyncHandler(async (req, res) => {
   const userId = req.user._id;
   const invoice = await Invoice.findOneAndDelete({ 
     _id: req.params.id, 
-    $or: [{ user: userId }, { userId: userId }] 
+    user: userId 
   });
 
   if (!invoice) {

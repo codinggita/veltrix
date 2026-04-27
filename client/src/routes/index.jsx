@@ -9,6 +9,7 @@ import ClientsPage from '../pages/dashboard/ClientsPage';
 import SettingsPage from '../pages/dashboard/SettingsPage';
 import AnalyticsPage from '../pages/dashboard/AnalyticsPage';
 import CreateInvoicePage from '../pages/dashboard/CreateInvoicePage';
+import EditInvoicePage from '../pages/dashboard/EditInvoicePage';
 import ExpensesPage from '../pages/dashboard/ExpensesPage';
 import ProtectedRoute from './guards/ProtectedRoute';
 import PublicRoute from './guards/PublicRoute';

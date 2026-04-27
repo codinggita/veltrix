@@ -69,8 +69,11 @@ const SettingsPage = () => {
         {Object.keys(profileData.notifications).map(k => (
           <div key={k} className="flex items-center justify-between p-4 bg-[#1A1A1A]/30 rounded-xl border border-white/5">
             <span className="text-sm font-bold text-white uppercase tracking-tighter">{k.replace(/([A-Z])/g, ' $1')}</span>
-            <div onClick={() => update(k, !profileData.notifications[k], 'notifications')} className={`w-12 h-6 rounded-full relative cursor-pointer transition-colors shrink-0 ${profileData.notifications[k] ? 'bg-primary' : 'bg-white/10'}`}>
-              <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${profileData.notifications[k] ? 'right-1' : 'left-1'}`} />
+            <div 
+              onClick={() => update(k, !profileData.notifications[k], 'notifications')} 
+              className={`w-12 h-6 rounded-full relative cursor-pointer transition-colors shrink-0 ${profileData.notifications[k] ? 'bg-primary' : 'bg-white/10'}`}
+            >
+              <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-200 ${profileData.notifications[k] ? 'translate-x-7' : 'translate-x-1'}`} />
             </div>
           </div>
         ))}
