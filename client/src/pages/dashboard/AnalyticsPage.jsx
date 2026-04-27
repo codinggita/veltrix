@@ -5,7 +5,8 @@ import toast from 'react-hot-toast';
 import { 
   RevenueTrendChart, 
   ClientConcentrationChart, 
-  ARAgingChart 
+  ARAgingChart,
+  GrowthVelocityChart
 } from '../../components/analytics/InsightCharts';
 
 const AnalyticsPage = () => {
@@ -34,6 +35,7 @@ const AnalyticsPage = () => {
   }, [activeFilter]);
 
   const COLORS = ['#6366f1', '#a855f7', '#ec4899', '#f43f5e', '#ef4444'];
+  const totalUnpaid = data?.arAging?.reduce((a, b) => a + (b.amount || 0), 0) || 0;
 
   if (loading) {
     return (
@@ -98,7 +100,7 @@ const AnalyticsPage = () => {
               <p className="text-sm text-gray-500">Outstanding invoices by age</p>
             </div>
             <div className="flex flex-col items-end shrink-0">
-              <span className="text-xl md:text-2xl font-black text-white">₹{data?.arAging.reduce((a, b) => a + b.amount, 0).toLocaleString()}</span>
+              <span className="text-xl md:text-2xl font-black text-white">₹{totalUnpaid.toLocaleString()}</span>
               <span className="text-[9px] uppercase tracking-widest text-rose-400 font-bold">Total Unpaid</span>
             </div>
           </div>
@@ -106,19 +108,20 @@ const AnalyticsPage = () => {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="bg-[#161616] border border-[#262626] rounded-3xl p-6 md:p-8 flex flex-col relative overflow-hidden">
-          <div className="flex items-center justify-between mb-auto">
+          <div className="flex items-center justify-between mb-auto z-10">
             <div>
-              <h3 className="text-xl font-bold text-white">Growth Velocity</h3>
-              <p className="text-sm text-gray-500">Month-over-month MRR</p>
+              <h3 className="text-xl font-bold text-white">Billing Momentum</h3>
+              <p className="text-sm text-gray-500">Month-over-month sales</p>
             </div>
-            <div className={`px-3 py-1 rounded-full text-xs font-bold ${velocity?.growthPercentage >= 0 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}`}>
-              {velocity?.growthPercentage >= 0 ? '+' : ''}{velocity?.growthPercentage}%
+            <div className={`px-3 py-1 rounded-full text-xs font-bold ${Number(velocity?.growthPercentage) >= 0 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}`}>
+              {Number(velocity?.growthPercentage) >= 0 ? '+' : ''}{velocity?.growthPercentage || 0}%
             </div>
           </div>
-          <div className="mt-8">
-            <div className="text-3xl md:text-4xl font-black text-white">₹{velocity?.currentMonthMRR.toLocaleString()}</div>
-            <div className="text-sm text-gray-500 mt-1">Current Month MRR</div>
+          <div className="mt-8 z-10">
+            <div className="text-3xl md:text-4xl font-black text-white">₹{velocity?.currentMonthMRR?.toLocaleString() || 0}</div>
+            <div className="text-sm text-gray-500 mt-1">Total Billed This Month</div>
           </div>
+          <GrowthVelocityChart data={velocity?.trend} />
         </motion.div>
       </div>
     </div>

@@ -130,22 +130,37 @@ exports.getFinancialInsights = asyncHandler(async (req, res) => {
 exports.getGrowthVelocity = asyncHandler(async (req, res) => {
   const userId = req.user._id;
   const userObjectId = new mongoose.Types.ObjectId(userId);
+  
+  // Get 6 months of MRR trend
+  const months = [];
   const now = new Date();
-  const startOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-  const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months.push(d);
+  }
 
-  const currentMonthRevenue = await Invoice.aggregate([
-    { $match: { $or: [{ user: userObjectId }, { userId: userObjectId }], status: 'paid', issueDate: { $gte: startOfCurrentMonth } } },
-    { $group: { _id: null, total: { $sum: '$total' } } }
-  ]);
+  const mrrTrend = await Promise.all(months.map(async (monthStart) => {
+    const nextMonth = new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 1);
+    const revenue = await Invoice.aggregate([
+      { 
+        $match: { 
+          user: userObjectId,
+          // Removed status: 'paid' to track total momentum/billed amount
+          issueDate: { $gte: monthStart, $lt: nextMonth } 
+        } 
+      },
+      { $group: { _id: null, total: { $sum: '$total' } } }
+    ]);
+    return {
+      month: monthStart.toLocaleString('default', { month: 'short' }),
+      amount: revenue[0]?.total || 0
+    };
+  }));
 
-  const lastMonthRevenue = await Invoice.aggregate([
-    { $match: { $or: [{ user: userObjectId }, { userId: userObjectId }], status: 'paid', issueDate: { $gte: startOfLastMonth, $lt: startOfCurrentMonth } } },
-    { $group: { _id: null, total: { $sum: '$total' } } }
-  ]);
+  console.log('Backend MRR Trend:', mrrTrend);
 
-  const currentTotal = currentMonthRevenue[0]?.total || 0;
-  const lastTotal = lastMonthRevenue[0]?.total || 0;
+  const currentTotal = mrrTrend[5].amount;
+  const lastTotal = mrrTrend[4].amount;
   
   const growth = lastTotal === 0 ? (currentTotal > 0 ? 100 : 0) : ((currentTotal - lastTotal) / lastTotal) * 100;
 
@@ -153,7 +168,8 @@ exports.getGrowthVelocity = asyncHandler(async (req, res) => {
     new ApiResponse(200, {
       currentMonthMRR: currentTotal,
       lastMonthMRR: lastTotal,
-      growthPercentage: growth.toFixed(1)
+      growthPercentage: growth.toFixed(1),
+      trend: mrrTrend
     }, "Growth velocity fetched successfully")
   );
 });

@@ -6,10 +6,12 @@ import {
 } from 'recharts';
 
 export const RevenueTrendChart = ({ data }) => {
-  const trendData = data?.revenueTrend.map(item => {
+  if (!data?.revenueTrend) return <div className="h-[300px] flex items-center justify-center text-text-muted">No trend data available</div>;
+
+  const trendData = data.revenueTrend.map(item => {
     const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const monthName = monthNames[item._id.month - 1];
-    const expense = data.expenseTrend.find(e => e._id.month === item._id.month && e._id.year === item._id.year);
+    const expense = data.expenseTrend?.find(e => e._id.month === item._id.month && e._id.year === item._id.year);
     return {
       name: monthName,
       revenue: item.revenue,
@@ -37,6 +39,35 @@ export const RevenueTrendChart = ({ data }) => {
           <Tooltip contentStyle={{ backgroundColor: '#161616', border: '1px solid #262626', borderRadius: '12px' }} />
           <Area type="monotone" dataKey="revenue" stroke="#6366f1" strokeWidth={3} fillOpacity={1} fill="url(#colorRev)" />
           <Area type="monotone" dataKey="expense" stroke="#f43f5e" strokeWidth={3} fillOpacity={1} fill="url(#colorExp)" />
+        </AreaChart>
+      </ResponsiveContainer>
+    </div>
+  );
+};
+
+export const GrowthVelocityChart = ({ data }) => {
+  if (!data || data.length < 2) return null;
+  
+  return (
+    <div className="absolute inset-0 z-0 pointer-events-none opacity-40 h-full w-full">
+      <ResponsiveContainer width="100%" height="100%">
+        <AreaChart data={data} margin={{ top: 80, right: 0, left: 0, bottom: 0 }}>
+          <defs>
+            <linearGradient id="colorGrowth" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#10b981" stopOpacity={0.6}/>
+              <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+            </linearGradient>
+          </defs>
+          <Area 
+            type="monotone" 
+            dataKey="amount" 
+            stroke="#10b981" 
+            strokeWidth={2} 
+            fill="url(#colorGrowth)" 
+            fillOpacity={1} 
+            isAnimationActive={true}
+            animationDuration={2000}
+          />
         </AreaChart>
       </ResponsiveContainer>
     </div>
