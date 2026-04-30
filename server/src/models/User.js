@@ -6,15 +6,7 @@ const userSchema = new mongoose.Schema({
   password: { 
     type: String, 
     required: true, 
-    minlength: 8,
-    validate: {
-      validator: function(v) {
-        // Only validate if password is being set or modified
-        if (!this.isModified('password')) return true;
-        return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(v);
-      },
-      message: "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number"
-    }
+    minlength: 8
   },
   businessName: { type: String, required: true, trim: true },
   registrationNumber: { type: String, trim: true },

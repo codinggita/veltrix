@@ -26,7 +26,7 @@ exports.updateExpense = async (req, res) => {
     const expense = await Expense.findOneAndUpdate(
       { _id: req.params.id, user: req.user._id },
       req.body,
-      { new: true, runValidators: true }
+      { returnDocument: 'after', runValidators: true }
     );
     if (!expense) return res.status(404).json({ success: false, message: 'Expense not found' });
     res.status(200).json({ success: true, data: expense });

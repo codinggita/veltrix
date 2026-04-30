@@ -36,7 +36,7 @@ exports.updateClient = async (req, res) => {
     const client = await Client.findOneAndUpdate(
       { _id: req.params.id, userId: req.user._id },
       req.body,
-      { new: true, runValidators: true }
+      { returnDocument: 'after', runValidators: true }
     );
     if (!client) {
       return res.status(404).json({ success: false, message: 'Client not found' });

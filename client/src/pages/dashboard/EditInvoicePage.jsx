@@ -61,11 +61,30 @@ const EditInvoicePage = () => {
               <div className="flex justify-between items-center"><h3 className="text-sm font-black text-white uppercase tracking-widest">Line Items</h3><button onClick={() => setFormData({...formData, items: [...formData.items, {description: '', quantity: 1, unitPrice: 0}]})} className="text-primary text-[11px] font-black uppercase tracking-widest flex items-center gap-2 hover:text-white transition-all">Add Item</button></div>
               <div className="space-y-4">
                 {formData.items.map((item, index) => (
-                  <div key={index} className="bg-white/[0.02] border border-white/5 p-6 rounded-[24px] space-y-4 relative group hover:border-white/10 transition-colors">
-                    <input placeholder="Description" className="w-full bg-transparent text-sm text-white outline-none border-b border-white/5 pb-2 focus:border-primary/30" value={item.description} onChange={e => handleItemChange(index, 'description', e.target.value)} />
-                    <div className="flex items-end justify-between gap-4">
-                      <div className="flex gap-4"><input type="number" className="w-16 bg-[#131313] border border-white/10 rounded-lg py-2 text-center text-sm text-white focus:border-primary outline-none" value={item.quantity} onChange={e => handleItemChange(index, 'quantity', Number(e.target.value))} /><input type="number" className="w-28 bg-[#131313] border border-white/10 rounded-lg py-2 pl-7 text-sm text-white focus:border-primary outline-none" value={item.unitPrice} onChange={e => handleItemChange(index, 'unitPrice', Number(e.target.value))} /></div>
-                      {formData.items.length > 1 && <button onClick={() => setFormData({...formData, items: formData.items.filter((_, i) => i !== index)})} className="p-3 text-rose-500/20 hover:text-rose-500 hover:bg-rose-500/5 rounded-xl"><span className="material-symbols-outlined text-[20px]">delete</span></button>}
+                  <div key={index} className="bg-white/[0.02] border border-white/5 p-6 rounded-[24px] relative group hover:border-white/10 transition-colors">
+                    <div className="flex flex-col md:flex-row gap-4 w-full">
+                      <div className="flex-1 flex flex-col gap-2">
+                        <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Description</label>
+                        <input placeholder="Service or product details..." className="w-full bg-[#111111] border border-white/[0.05] focus:border-white/20 focus:bg-[#1A1A1A] hover:border-white/10 rounded-xl px-5 py-3.5 transition-all outline-none text-white placeholder:text-gray-600 text-sm font-medium" value={item.description} onChange={e => handleItemChange(index, 'description', e.target.value)} />
+                      </div>
+                      <div className="w-full md:w-32 flex flex-col gap-2">
+                        <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Qty</label>
+                        <input type="number" className="w-full bg-[#111111] border border-white/[0.05] focus:border-white/20 focus:bg-[#1A1A1A] hover:border-white/10 rounded-xl px-5 py-3.5 transition-all outline-none text-white text-sm font-medium" value={item.quantity} onChange={e => handleItemChange(index, 'quantity', Number(e.target.value))} />
+                      </div>
+                      <div className="w-full md:w-48 flex flex-col gap-2">
+                        <label className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] ml-1">Unit Price</label>
+                        <div className="relative">
+                          <span className="absolute left-5 top-1/2 -translate-y-1/2 text-text-muted font-black">₹</span>
+                          <input type="number" className="w-full bg-[#111111] border border-white/[0.05] focus:border-white/20 focus:bg-[#1A1A1A] hover:border-white/10 rounded-xl py-3.5 pl-10 pr-5 transition-all outline-none text-white text-sm font-medium" value={item.unitPrice} onChange={e => handleItemChange(index, 'unitPrice', Number(e.target.value))} />
+                        </div>
+                      </div>
+                      {formData.items.length > 1 && (
+                        <div className="flex flex-col justify-end">
+                          <button onClick={() => setFormData({...formData, items: formData.items.filter((_, i) => i !== index)})} className="h-[50px] w-12 flex items-center justify-center text-rose-500/50 hover:text-rose-500 hover:bg-rose-500/10 rounded-xl transition-all">
+                            <span className="material-symbols-outlined text-[20px]">delete</span>
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}

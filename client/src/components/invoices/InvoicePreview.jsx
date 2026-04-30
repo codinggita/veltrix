@@ -60,7 +60,7 @@ const InvoicePreview = ({ formData, selectedClient, user, subtotal, total }) => 
               <tr key={i} className="text-white">
                 <td className="py-4 md:py-5 pr-4 truncate max-w-[100px] md:max-w-none"><p className="text-[9px] md:text-[11px] font-black italic tracking-tight">{item.description || '...'}</p></td>
                 <td className="py-4 md:py-5 text-center text-[10px] md:text-[12px] font-black tabular-nums">{item.quantity}</td>
-                <td className="py-4 md:py-5 text-right text-[10px] md:text-[12px] font-black tabular-nums">₹{(item.quantity * (item.unitPrice || 0)).toLocaleString()}</td>
+                <td className="py-4 md:py-5 text-right text-[10px] md:text-[12px] font-black tabular-nums">₹{(item.quantity * (item.unitPrice || 0)).toLocaleString('en-IN')}</td>
               </tr>
             ))}
           </tbody>
@@ -70,11 +70,11 @@ const InvoicePreview = ({ formData, selectedClient, user, subtotal, total }) => 
       <div className="border-t border-white/5 pt-6 md:pt-10 mt-auto space-y-3 md:space-y-4 relative z-10">
         <div className="flex justify-between items-center px-1">
           <span className="text-[7px] md:text-[10px] font-black text-white/20 uppercase tracking-[0.3em]">NET LOGICAL VOLUME</span>
-          <span className="text-[12px] md:text-[14px] font-black text-white tabular-nums">₹{subtotal.toLocaleString()}</span>
+          <span className="text-[12px] md:text-[14px] font-black text-white tabular-nums">₹{subtotal.toLocaleString('en-IN')}</span>
         </div>
         <div className="flex justify-between items-center bg-white/5 p-4 md:p-8 rounded-[20px] md:rounded-[32px] border border-white/5">
           <span className="text-xs md:text-xl font-black text-white italic tracking-tighter">FINAL SETTLEMENT</span>
-          <span className="text-xl md:text-4xl font-black text-white tracking-tighter italic tabular-nums">₹{total.toLocaleString()}</span>
+          <span className="text-xl md:text-4xl font-black text-white tracking-tighter italic tabular-nums">₹{total.toLocaleString('en-IN')}</span>
         </div>
         <div className="flex items-center gap-2 pt-4 md:pt-6 opacity-20 justify-center">
           <span className="material-symbols-outlined text-success text-[10px] md:text-[14px]">verified_user</span>

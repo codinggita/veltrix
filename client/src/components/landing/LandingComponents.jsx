@@ -4,9 +4,9 @@ import { motion } from 'framer-motion';
 import { useSelector } from 'react-redux';
 
 export const STATS_DATA = [
-  { id: 'in', title: 'Inflow', value: '₹ 42.5L', trend: '+12%', isPositive: true },
-  { id: 'out', title: 'Outflow', value: '₹ 14.2L', trend: '-2%', isPositive: false },
-  { id: 'net', title: 'Net Position', value: '₹ 28.3L', trend: '+18%', isPositive: true, isHighlight: true }
+  { id: 'rev', title: 'Total Revenue', value: '₹ 11,47,584', trend: '+12.5%', isPositive: true },
+  { id: 'pend', title: 'Pending Amount', value: '₹ 2,45,000', trend: '-2.1%', isPositive: true }, // Less pending is good
+  { id: 'act', title: 'Active Invoices', value: '71', trend: '+8', isPositive: true, isHighlight: true }
 ];
 
 export const CHART_BARS = [
@@ -79,16 +79,14 @@ export const Footer = () => (
   </footer>
 );
 
-export const StatCard = ({ title, value, trend, isPositive, isHighlight }) => {
-  const icon = isPositive ? 'trending_up' : 'trending_down';
-  const color = isPositive ? (isHighlight ? 'text-primary' : 'text-emerald-400') : 'text-rose-400';
+export const StatCard = ({ title, value, trend, trendIcon, trendColor, isHighlight }) => {
   return (
     <motion.div variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }} className={`bg-[#1A1A1A] rounded-xl p-3 md:p-6 border ${isHighlight ? 'border-primary/20' : 'border-white/[0.05]'} relative overflow-hidden group/card transition-colors cursor-default`}>
       {isHighlight && <div className="absolute -inset-2 bg-primary/20 blur-xl opacity-0 group-hover/card:opacity-100 transition-opacity duration-500"></div>}
       <div className="relative z-10">
         <div className={`text-[8px] md:text-[10px] ${isHighlight ? 'text-primary/70' : 'text-gray-500'} mb-1 md:mb-3 uppercase tracking-[0.2em] font-bold truncate`}>{title}</div>
-        <div className="text-sm md:text-3xl font-black text-white tabular-nums tracking-tight">{value}</div>
-        <div className={`text-[8px] md:text-xs ${color} mt-1 md:mt-3 font-bold flex items-center gap-0.5`}><span className="material-symbols-outlined text-[10px] md:text-[14px]">{icon}</span> {trend}</div>
+        <div className="text-base md:text-2xl lg:text-3xl font-black text-white tabular-nums tracking-tighter whitespace-nowrap overflow-hidden">{value}</div>
+        <div className={`text-[8px] md:text-xs ${trendColor} mt-1 md:mt-3 font-bold flex items-center gap-0.5`}><span className="material-symbols-outlined text-[10px] md:text-[14px]">{trendIcon}</span> {trend}</div>
       </div>
     </motion.div>
   );
