@@ -1,5 +1,6 @@
 const Payment = require('../models/Payment');
 const Invoice = require('../models/Invoice');
+const Notification = require('../models/Notification');
 const mongoose = require('mongoose');
 const asyncHandler = require('../utils/asyncHandler');
 const ApiError = require('../utils/apiError');
@@ -76,6 +77,23 @@ exports.createPayment = asyncHandler(async (req, res) => {
 
   if (status === 'Paid' && invoice) {
     await Invoice.findByIdAndUpdate(invoice, { status: 'paid' });
+    const inv = await Invoice.findById(invoice);
+    if(inv) {
+      await Notification.create({
+        user: req.user._id,
+        title: 'Payment Received',
+        message: `Payment of ${amount} received for Invoice #${inv.invoiceNumber}.`,
+        type: 'success',
+        link: `/app/invoices/edit/${invoice}`
+      });
+    }
+  } else {
+    await Notification.create({
+      user: req.user._id,
+      title: 'Payment Logged',
+      message: `A payment of ${amount} has been logged (${status}).`,
+      type: 'info'
+    });
   }
 
   return res.status(201).json(

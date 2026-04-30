@@ -81,4 +81,6 @@ invoiceSchema.pre('validate', async function() {
   this.total = (this.subtotal || 0) + (Number(this.tax) || 0);
 });
 
+invoiceSchema.index({ invoiceNumber: 1, user: 1 }, { unique: true });
+
 module.exports = mongoose.model('Invoice', invoiceSchema);

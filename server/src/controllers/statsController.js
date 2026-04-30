@@ -13,16 +13,15 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
   // Aggregate needs explicit ObjectId casting if userId is a string
   const userObjectId = new mongoose.Types.ObjectId(userId);
 
-  // Fix: Supporting both user and userId fields for backward compatibility
-  const userQuery = { $or: [{ user: userObjectId }, { userId: userObjectId }] };
-  const clientQuery = { $or: [{ user: userObjectId }, { userId: userObjectId }] };
+  const clientQuery = { userId: userObjectId };
+  const userQuery = { user: userObjectId };
 
   const totalClients = await Client.countDocuments(clientQuery);
   const totalInvoices = await Invoice.countDocuments(userQuery);
   
   // Real aggregation for revenue
   const revenueStats = await Invoice.aggregate([
-    { $match: { $or: [{ user: userObjectId }, { userId: userObjectId }] } },
+    { $match: userQuery },
     {
       $group: {
         _id: null,
@@ -46,17 +45,18 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
   const revenueTrend = await Invoice.aggregate([
     { 
       $match: { 
-        user: userObjectId,
-        createdAt: { $gte: sixMonthsAgo } 
+        ...userQuery,
+        status: 'paid',
+        issueDate: { $gte: sixMonthsAgo } 
       } 
     },
     {
       $group: {
         _id: { 
-          month: { $month: '$createdAt' }, 
-          year: { $year: '$createdAt' } 
+          month: { $month: '$issueDate' }, 
+          year: { $year: '$issueDate' } 
         },
-        amount: { $sum: { $ifNull: ['$total', 0] } }
+        income: { $sum: { $ifNull: ['$total', 0] } }
       }
     },
     { $sort: { '_id.year': 1, '_id.month': 1 } }
@@ -65,17 +65,17 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
   const expenseTrend = await Expense.aggregate([
     { 
       $match: { 
-        user: userObjectId,
-        createdAt: { $gte: sixMonthsAgo } 
+        ...userQuery,
+        date: { $gte: sixMonthsAgo } 
       } 
     },
     {
       $group: {
         _id: { 
-          month: { $month: '$createdAt' }, 
-          year: { $year: '$createdAt' } 
+          month: { $month: '$date' }, 
+          year: { $year: '$date' } 
         },
-        amount: { $sum: { $ifNull: ['$amount', 0] } }
+        expenses: { $sum: { $ifNull: ['$amount', 0] } }
       }
     },
     { $sort: { '_id.year': 1, '_id.month': 1 } }
@@ -92,6 +92,18 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
     .limit(20)
     .lean();
 
+  const pipelineCounts = await Invoice.aggregate([
+    { $match: { ...userQuery } },
+    { $group: { _id: "$status", count: { $sum: 1 } } }
+  ]);
+
+  const pipeline = { pending: 0, overdue: 0, paid: 0 };
+  pipelineCounts.forEach(p => {
+    if (p._id === 'sent') pipeline.pending = p.count;
+    if (p._id === 'overdue') pipeline.overdue = p.count;
+    if (p._id === 'paid') pipeline.paid = p.count;
+  });
+
   return res.status(200).json(
     new ApiResponse(200, {
       totalClients,
@@ -101,6 +113,7 @@ exports.getDashboardStats = asyncHandler(async (req, res) => {
       recentClients,
       recentInvoices,
       recentActivity: recentInvoices,
+      pipeline,
       cashFlowData: {
         revenue: revenueTrend,
         expenses: expenseTrend

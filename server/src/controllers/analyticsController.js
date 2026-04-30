@@ -42,7 +42,7 @@ exports.getFinancialInsights = asyncHandler(async (req, res) => {
     {
       $group: {
         _id: { month: { $month: '$issueDate' }, year: { $year: '$issueDate' } },
-        revenue: { $sum: '$total' }
+        income: { $sum: '$total' }
       }
     },
     { $sort: { '_id.year': 1, '_id.month': 1 } }

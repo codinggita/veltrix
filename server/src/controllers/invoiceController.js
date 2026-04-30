@@ -86,6 +86,14 @@ exports.createInvoice = asyncHandler(async (req, res) => {
     currency
   });
 
+  await Notification.create({
+    user: userId,
+    title: 'Invoice Generated',
+    message: `Invoice #${invoiceNumber} has been successfully generated for ${clientExists.name}.`,
+    type: 'success',
+    link: `/app/invoices/edit/${invoice._id}`
+  });
+
   return res.status(201).json(
     new ApiResponse(201, invoice, "Invoice created successfully")
   );
@@ -101,7 +109,7 @@ exports.updateStatus = asyncHandler(async (req, res) => {
   const invoice = await Invoice.findOneAndUpdate(
     { _id: req.params.id, user: userId },
     { status },
-    { new: true, runValidators: true }
+    { returnDocument: 'after', runValidators: true }
   );
 
   if (!invoice) {
@@ -139,8 +147,18 @@ exports.updateInvoice = asyncHandler(async (req, res) => {
   const updated = await Invoice.findByIdAndUpdate(
     req.params.id,
     { client, invoiceNumber, dueDate, items, tax, notes, currency, status },
-    { new: true, runValidators: true }
+    { returnDocument: 'after', runValidators: true }
   );
+
+  if (invoice.status !== status) {
+    await Notification.create({
+      user: userId,
+      title: 'Invoice Status Updated',
+      message: `Invoice #${invoiceNumber} is now marked as ${status.toUpperCase()}.`,
+      type: status === 'paid' ? 'success' : status === 'overdue' ? 'error' : 'info',
+      link: `/app/invoices/edit/${updated._id}`
+    });
+  }
 
   return res.status(200).json(
     new ApiResponse(200, updated, "Invoice updated successfully")
