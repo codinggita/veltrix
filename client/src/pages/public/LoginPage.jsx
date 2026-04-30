@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginThunk, reset } from '../../store/slices/authSlice';
+import SEO from '../../components/ui/SEO';
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -24,6 +25,7 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen bg-[#0F0F0F] flex flex-col md:flex-row font-body text-white selection:bg-primary-container">
+      <SEO title="Login" description="Access your Veltrix financial dashboard to manage invoices and track payments." />
       {/* Left Visual Identity */}
       <div className="hidden md:flex flex-col flex-1 relative overflow-hidden bg-surface-container-lowest border-r border-outline-variant/10">
         <div className="absolute inset-0 bg-gradient-to-br from-primary-container/20 to-transparent pointer-events-none"></div>
