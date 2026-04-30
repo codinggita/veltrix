@@ -6,23 +6,53 @@ import {
 } from 'recharts';
 
 export const RevenueTrendChart = ({ data }) => {
-  if (!data?.revenueTrend) return <div className="h-[300px] flex items-center justify-center text-text-muted">No trend data available</div>;
+  if (!data?.revenueTrend && !data?.expenseTrend) {
+    return <div className="h-[300px] flex items-center justify-center text-text-muted text-sm font-medium">Insufficient performance data for visualization</div>;
+  }
 
-  const trendData = data.revenueTrend.map(item => {
-    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const monthName = monthNames[item._id.month - 1];
-    const expense = data.expenseTrend?.find(e => e._id.month === item._id.month && e._id.year === item._id.year);
-    return {
-      name: monthName,
-      revenue: item.revenue,
-      expense: expense ? expense.expenses : 0
-    };
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  
+  // Create a map of all unique month-year keys from both trends
+  const trendMap = new Map();
+  
+  (data.revenueTrend || []).forEach(item => {
+    const key = `${item._id.year}-${item._id.month}`;
+    trendMap.set(key, { 
+      name: `${monthNames[item._id.month - 1]}`, 
+      revenue: Number(item.income || item.revenue || item.amount || 0), 
+      expense: 0,
+      year: item._id.year,
+      month: item._id.month
+    });
+  });
+
+  (data.expenseTrend || []).forEach(item => {
+    const key = `${item._id.year}-${item._id.month}`;
+    const val = Number(item.expenses || item.expense || item.amount || 0);
+    if (trendMap.has(key)) {
+      const existing = trendMap.get(key);
+      trendMap.set(key, { ...existing, expense: val });
+    } else {
+      trendMap.set(key, { 
+        name: `${monthNames[item._id.month - 1]}`, 
+        revenue: 0, 
+        expense: val,
+        year: item._id.year,
+        month: item._id.month
+      });
+    }
+  });
+
+  // Sort chronologically and convert to array
+  const trendData = Array.from(trendMap.values()).sort((a, b) => {
+    if (a.year !== b.year) return a.year - b.year;
+    return a.month - b.month;
   });
 
   return (
     <div className="h-[300px] w-full">
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={trendData}>
+        <AreaChart data={trendData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
           <defs>
             <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3}/>
@@ -36,7 +66,12 @@ export const RevenueTrendChart = ({ data }) => {
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#262626" />
           <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 12 }} dy={10} />
           <YAxis hide />
-          <Tooltip contentStyle={{ backgroundColor: '#161616', border: '1px solid #262626', borderRadius: '12px' }} />
+          <Tooltip 
+            itemStyle={{ color: '#FAFAFA', fontWeight: 'bold' }} 
+            labelStyle={{ color: '#A1A1AA', fontWeight: 'bold', marginBottom: '8px' }} 
+            contentStyle={{ backgroundColor: '#161616', border: '1px solid #262626', borderRadius: '12px', padding: '12px' }} 
+            formatter={(value) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(value)}
+          />
           <Area type="monotone" dataKey="revenue" stroke="#6366f1" strokeWidth={3} fillOpacity={1} fill="url(#colorRev)" />
           <Area type="monotone" dataKey="expense" stroke="#f43f5e" strokeWidth={3} fillOpacity={1} fill="url(#colorExp)" />
         </AreaChart>
@@ -106,7 +141,7 @@ export const ClientConcentrationChart = ({ data, colors }) => {
               <div className="w-2 h-2 rounded-full" style={{ backgroundColor: colors[index % colors.length] }}></div>
               <span className="text-sm font-medium text-white group-hover:text-primary transition-colors">{client.name}</span>
             </div>
-            <span className="text-xs text-gray-500">₹{client.totalRevenue?.toLocaleString() || 0}</span>
+            <span className="text-xs text-gray-500">₹{client.totalRevenue?.toLocaleString('en-IN') || 0}</span>
           </div>
         ))}
       </div>
@@ -123,7 +158,13 @@ export const ARAgingChart = ({ data }) => {
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#262626" />
           <XAxis dataKey="_id" axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 12 }} />
           <YAxis hide />
-          <Tooltip cursor={{ fill: '#1E1E1E' }} contentStyle={{ backgroundColor: '#161616', border: '1px solid #262626', borderRadius: '12px' }} />
+          <Tooltip 
+            cursor={{ fill: '#1E1E1E' }} 
+            itemStyle={{ color: '#FAFAFA', fontWeight: 'bold' }} 
+            labelStyle={{ color: '#A1A1AA', fontWeight: 'bold', marginBottom: '8px' }} 
+            contentStyle={{ backgroundColor: '#161616', border: '1px solid #262626', borderRadius: '12px', padding: '12px' }} 
+            formatter={(value) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(value)}
+          />
           <Bar dataKey="amount" radius={[8, 8, 0, 0]}>
             {data.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={entry._id === '> 60 Days' ? '#fca5a5' : '#262626'} />
