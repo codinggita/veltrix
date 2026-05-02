@@ -26,6 +26,7 @@ Access the live project, complete API documentation, and original design archite
 - **🟢 Live Application:** [veltrix-silk.vercel.app](https://veltrix-silk.vercel.app/)
 - **📄 Complete API Documentation:** [Postman Public Workspace](https://documenter.getpostman.com/view/50839472/2sBXqKneiC)
 - **🎨 UI/UX Design Architecture:** [Figma Design File](https://www.figma.com/design/cdVVUVDGkP5GooQPCZDcXV/Untitled?node-id=0-1&t=zMHKJOdjg7hg6RWl-0)
+- **🎥 Project Walkthrough Video:** [YouTube](https://youtu.be/7QFxHJh1vIA)
 
 ---
 
@@ -36,6 +37,31 @@ Access the live project, complete API documentation, and original design archite
 It was built to solve a critical problem: the fragmentation of financial tracking. By eliminating the friction of scattered Excel spreadsheets, disjointed WhatsApp payment reminders, and chaotic expense logging, Veltrix consolidates your entire financial universe into one cohesive, highly secure, and visually stunning dark-themed sovereign ledger.
 
 Veltrix provides actionable insights, automated workflows, and institutional-grade tools to give you absolute control over your cash flow, client relationships, and business growth.
+
+---
+
+## 📸 UI Screenshots
+
+<div align="center">
+  <table>
+    <tr>
+      <td><img src="https://res.cloudinary.com/dhr1jtyi2/image/upload/v1777740814/xmxx51oasjdbf46elo6u.png" alt="Dashboard Overview" width="400"/></td>
+      <td><img src="https://res.cloudinary.com/dhr1jtyi2/image/upload/v1777740818/sl5k64hivjiywkwsjbmx.png" alt="Analytics" width="400"/></td>
+    </tr>
+    <tr>
+      <td><img src="https://res.cloudinary.com/dhr1jtyi2/image/upload/v1777740822/aqzaejb3x5kzfkqjop65.png" alt="Invoices" width="400"/></td>
+      <td><img src="https://res.cloudinary.com/dhr1jtyi2/image/upload/v1777740826/bw07n5rt6db8pxmzpjsm.png" alt="Invoice Preview" width="400"/></td>
+    </tr>
+    <tr>
+      <td><img src="https://res.cloudinary.com/dhr1jtyi2/image/upload/v1777740828/wl8qpm1vvfttssf8vwww.png" alt="Clients" width="400"/></td>
+      <td><img src="https://res.cloudinary.com/dhr1jtyi2/image/upload/v1777740832/pse9xkbtg8xzcghhsov4.png" alt="Expenses" width="400"/></td>
+    </tr>
+    <tr>
+      <td><img src="https://res.cloudinary.com/dhr1jtyi2/image/upload/v1777740836/a2vg0u59uar2gnotq2vi.png" alt="Notifications" width="400"/></td>
+      <td><img src="https://res.cloudinary.com/dhr1jtyi2/image/upload/v1777740840/hvlm1suqqepamvh4jjm5.png" alt="Settings" width="400"/></td>
+    </tr>
+  </table>
+</div>
 
 ---
 
